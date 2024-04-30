@@ -10,4 +10,8 @@
     <_ContentIncludedByDefault Remove="appsettings.production.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
+  </ItemGroup>
+
 </Project>
