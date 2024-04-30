@@ -3,7 +3,7 @@
 ## App for tracking employees of different companies
 
 ### Implemented features:
-+ DAL: new way of seeding: through Repository classes in OnModelCreating() of DbContext (hence no Seeder class used)
++ DAL: new way of seeding: through Repository classes in OnModelCreating() of DbContext. Data's being inserted via applying EF Core migration (hence no Seeder class used)
 
 ### Stack:
 + .NET 6
