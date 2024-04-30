@@ -1,3 +1,4 @@
+using Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmploymentRegistry.Controllers
@@ -11,9 +12,10 @@ namespace EmploymentRegistry.Controllers
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        //private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILoggerManager _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILoggerManager logger)
         {
             _logger = logger;
         }
@@ -21,6 +23,11 @@ namespace EmploymentRegistry.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+            _logger.Info("Test INFO message.");
+            _logger.Error("Test ERROR message.");
+            _logger.Debug("Test DEBUG message.");
+            _logger.Warning("Test WARNING message.");
+
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
