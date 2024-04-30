@@ -15,8 +15,8 @@ namespace EmploymentRegistry.ContextFactory
                                         .AddJsonFile("appsettings.json")
                                         .Build();
             var builder = new DbContextOptionsBuilder<RepositoryContext>()
-                                        .UseSqlServer(configuration.GetConnectionString("sqlConnection")/*, 
-                                        b => b.MigrationsAssembly("EmploymentRegistry")*/);
+                                        .UseSqlServer(configuration.GetConnectionString("EmploymentRegistryDb"), 
+                                        b => b.MigrationsAssembly("EmploymentRegistry"));
             return new RepositoryContext(builder.Options);
         }
     }
