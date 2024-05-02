@@ -3,7 +3,10 @@
 ## App for tracking employees of different companies
 
 ### Implemented features:
++ Patterns: Onion architecture, Repository pattern
 + DAL: new way of seeding: through Repository classes in OnModelCreating() of DbContext. Data's being inserted via applying EF Core migration (hence no Seeder class used)
++ DAL: passing boolean variable to Repository that indicates whether we want to use data in Read-Only mode(if true, context.SaveChanges() won't apply changes to DB), or want to modify it. this method improves query speed
++ DAL: Both interfaces for Generic Repository and specialized Repositories for Entities and abstract class of Generic Repository. We need both interfaces and abstract class for separating the logic that is common for all our Repository Entities and also specific for every Entity.
 
 ### Stack:
 + .NET 6
