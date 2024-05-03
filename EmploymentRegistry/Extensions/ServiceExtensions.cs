@@ -1,5 +1,6 @@
 ﻿using Contracts.Interfaces;
 using LoggerService;
+using Repository;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -8,6 +9,10 @@ namespace EmploymentRegistry.Extensions
         // Configure Logger Service IOC
         public static void ConfigureLoggerService(this IServiceCollection serviceDescriptors) =>
             serviceDescriptors.AddSingleton<ILoggerManager, LoggerManager>();
+
+        // Configure Repository Manager Service (DAL)
+        public static void ConfigureRepositoryManager(this IServiceCollection serviceDescriptors) =>
+            serviceDescriptors.AddScoped<IRepositoryManager, RepositoryManager>();
 
         // Configure CORS
         public static void ConfigureCors(this IServiceCollection serviceDescriptors) =>
