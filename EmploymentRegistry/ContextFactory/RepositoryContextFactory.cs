@@ -10,6 +10,8 @@ namespace EmploymentRegistry.ContextFactory
 
         public RepositoryContext CreateDbContext(string[] args)
         {
+            // This factory is used for creating migrations from this project
+            // For run-time we'll use DI
             var configuration = new ConfigurationBuilder()
                                         .SetBasePath(Directory.GetCurrentDirectory())
                                         .AddJsonFile("appsettings.json")

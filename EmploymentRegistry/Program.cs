@@ -12,8 +12,14 @@ LogManager.Setup()
 // Add Service Configuration by Extension Methods.
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
+// Contracts.Logger
 builder.Services.ConfigureLoggerService();
+// Repository.RepositoryManager (DAL)
 builder.Services.ConfigureRepositoryManager();
+// Service.ServiceManager (BLL)
+builder.Services.ConfigureServiceManager();
+// DbContext
+builder.Services.ConfigureRepositoryContext(builder.Configuration);
 
 // Add services to the container.
 

@@ -1,6 +1,9 @@
 ﻿using Contracts.Interfaces;
 using LoggerService;
+using Microsoft.EntityFrameworkCore;
 using Repository;
+using Service;
+using Service.Contracts;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -13,6 +16,16 @@ namespace EmploymentRegistry.Extensions
         // Configure Repository Manager Service (DAL)
         public static void ConfigureRepositoryManager(this IServiceCollection serviceDescriptors) =>
             serviceDescriptors.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        // Configure ServiceManager Service (BLL)
+        public static void ConfigureServiceManager(this IServiceCollection serviceDescriptors) =>
+            serviceDescriptors.AddScoped<IServiceManager, ServiceManager>();
+
+        // Configure DbContext
+        public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
+                                                        IConfiguration configuration) =>
+            serviceDescriptors.AddDbContext<RepositoryContext>(options =>
+                                options.UseSqlServer(configuration.GetConnectionString("EmploymentRegistryDb")));
 
         // Configure CORS
         public static void ConfigureCors(this IServiceCollection serviceDescriptors) =>
