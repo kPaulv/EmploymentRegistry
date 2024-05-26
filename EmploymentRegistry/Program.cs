@@ -23,7 +23,9 @@ builder.Services.ConfigureRepositoryContext(builder.Configuration);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// Add controllers (PL)
+builder.Services.AddControllers()
+        .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
 var app = builder.Build();
 
