@@ -20,6 +20,8 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 // DbContext
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
+// Auto-Mapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Add services to the container.
 

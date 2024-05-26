@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Entities.Entities;
 
 namespace Contracts.Interfaces
 {
     public interface ICompanyRepository
     {
+        public IEnumerable<Company> GetAllCompanies(bool trackChanges);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Contracts.Interfaces;
+﻿using AutoMapper;
+using Contracts.Interfaces;
 using Service.Contracts;
 
 namespace Service
@@ -6,12 +7,14 @@ namespace Service
     public class EmployeeService : IEmployeeService
     {
         private readonly IRepositoryManager _repository;
-        private readonly ILoggerManager logger;
+        private readonly ILoggerManager _logger;
+        private readonly IMapper _mapper;
 
-        public EmployeeService(IRepositoryManager repository, ILoggerManager logger)
+        public EmployeeService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
-            this.logger = logger;
+            _logger = logger;
+            _mapper = mapper;
         }
     }
 }
