@@ -14,16 +14,10 @@ namespace Presentation.Controllers
         [HttpGet]
         public IActionResult GetCompanies()
         {
-            try
-            {
-                var companies = _serviceManager.CompanyService.GetAllCompanies(trackChanges: false);
+            throw new Exception("balaboba");
+            var companies = _serviceManager.CompanyService.GetAllCompanies(trackChanges: false);
 
-                return Ok(companies);
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, $"Internal Server Error. {ex.InnerException}");
-            }
+            return Ok(companies);
         }
     }
 }

@@ -1,3 +1,4 @@
+using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
@@ -31,10 +32,12 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
+// configure Exception handler
+var logger = app.Services.GetRequiredService<ILoggerManager>();
+app.ConfigureExceptionHandler(logger);
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-    app.UseDeveloperExceptionPage();
-else 
+if (app.Environment.IsProduction())
     app.UseHsts();
 
 app.UseHttpsRedirection();
