@@ -9,5 +9,9 @@ namespace Repository
 
         public IEnumerable<Company> GetAllCompanies(bool trackChanges) =>
                         ReadAll(trackChanges).OrderBy(c => c.Name).ToList();
+
+        public Company GetCompany(Guid companyId, bool trackChanges) => 
+                        ReadByCondition(c => c.Id.Equals(companyId), trackChanges)
+                        .SingleOrDefault();
     }
 }

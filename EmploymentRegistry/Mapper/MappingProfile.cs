@@ -13,6 +13,7 @@ namespace EmploymentRegistry.Mapper
                                opt => opt.MapFrom(c => string.Join(' ', 
                                                                     c.Address, 
                                                                     c.Country)));
+            CreateMap<Employee, EmployeeDto>();
         }
     }
 }

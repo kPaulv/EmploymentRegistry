@@ -18,5 +18,12 @@ namespace Presentation.Controllers
 
             return Ok(companies);
         }
+
+        [HttpGet("{id:guid}")]     // api/companies/id
+        public IActionResult GetCompany(Guid id)
+        {
+            var company = _serviceManager.CompanyService.GetCompany(id, trackChanges: false);
+            return Ok(company);
+        }
     }
 }

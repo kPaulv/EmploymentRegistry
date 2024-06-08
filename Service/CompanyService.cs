@@ -2,6 +2,7 @@
 using Contracts.Interfaces;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Entities.Exceptions;
 
 namespace Service
 {
@@ -25,6 +26,15 @@ namespace Service
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
             return companiesDto;
+        }
+
+        public CompanyDto GetCompany(Guid id, bool trackChanges) {
+            var company = _repository.CompanyStorage.GetCompany(id, trackChanges);
+            if(company == null) 
+                throw new CompanyNotFoundException(id);
+
+            var companyDto = _mapper.Map<CompanyDto>(company);
+            return companyDto;
         }
     }
 }

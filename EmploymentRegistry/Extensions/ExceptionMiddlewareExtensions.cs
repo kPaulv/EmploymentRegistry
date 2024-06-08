@@ -1,5 +1,6 @@
 ﻿using Contracts.Interfaces;
 using Entities.ErrorModel;
+using Entities.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 
@@ -13,19 +14,25 @@ namespace EmploymentRegistry.Extensions
             {
                 errorApp.Run(async context =>
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     context.Response.ContentType = "application/json";
 
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
+                        // if NotFoundException thrown - 404, default - 500
+                        context.Response.StatusCode = contextFeature.Error switch
+                        {
+                            NotFoundException => StatusCodes.Status404NotFound,
+                            _ => StatusCodes.Status500InternalServerError
+                        };
+
                         // write full exception to log
                         logger.Error($"Error occured: {contextFeature.Error}");
                         // initialize response model for client
                         await context.Response.WriteAsync(new ErrorDetails()
                         {
                             StatusCode = context.Response.StatusCode,
-                            Message = "Internal Server Error"
+                            Message = contextFeature.Error.Message
                         }.ToString());
                     }
                 });
