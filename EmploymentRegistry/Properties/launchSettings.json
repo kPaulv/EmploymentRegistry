@@ -12,7 +12,7 @@
     "EmploymentRegistry": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       //"launchUrl": "weatherforecast",
       "applicationUrl": "https://localhost:7221;http://localhost:5088",
       "environmentVariables": {

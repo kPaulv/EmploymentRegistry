@@ -27,8 +27,12 @@ builder.Services.AddAutoMapper(typeof(Program));
 // Add services to the container.
 
 // Add controllers (PL)
-builder.Services.AddControllers()
-        .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
+builder.Services.AddControllers(config =>
+{
+    config.RespectBrowserAcceptHeader = true;   // for content negotiation
+    config.ReturnHttpNotAcceptable = true;
+}).AddXmlDataContractSerializerFormatters()
+  .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
 var app = builder.Build();
 
