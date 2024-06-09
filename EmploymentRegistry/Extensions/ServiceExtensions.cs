@@ -1,4 +1,5 @@
 ﻿using Contracts.Interfaces;
+using EmploymentRegistry.Formatter;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Repository;
@@ -20,6 +21,10 @@ namespace EmploymentRegistry.Extensions
         // Configure ServiceManager Service (BLL)
         public static void ConfigureServiceManager(this IServiceCollection serviceDescriptors) =>
             serviceDescriptors.AddScoped<IServiceManager, ServiceManager>();
+
+        // Configure CSV Output Formatter for controllers
+        public static IMvcBuilder AddCustomCsvFormatter(this IMvcBuilder mvcBuilder) =>
+           mvcBuilder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
 
         // Configure DbContext
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
