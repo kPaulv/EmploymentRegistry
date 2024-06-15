@@ -14,6 +14,12 @@ namespace Repository
                         ReadByCondition(c => c.Id.Equals(companyId), trackChanges)
                         .SingleOrDefault();
 
+        public IEnumerable<Company> GetCompaniesByIds(IEnumerable<Guid> ids, 
+                                                        bool trackChanges) =>
+                                     ReadByCondition(c => ids.Contains(c.Id), 
+                                                        trackChanges)
+                                     .ToList();
+
         public void CreateCompany(Company company) => Create(company);
     }
 }

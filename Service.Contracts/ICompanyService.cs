@@ -8,7 +8,9 @@ namespace Service.Contracts
 
         CompanyOutputDto GetCompany(Guid id, bool trackChanges);
 
-        CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto); 
+        CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto);
 
+        IEnumerable<CompanyOutputDto> GetCompaniesByIds(IEnumerable<Guid> ids, 
+                                                    bool trackChanges);
     }
 }

@@ -4,6 +4,8 @@ using Service.Contracts;
 using Shared.DataTransferObjects;
 using Entities.Exceptions;
 using Entities.Entities;
+using Entities.Exceptions.BadRequest;
+using Entities.Exceptions.NotFound;
 
 namespace Service
 {
@@ -36,6 +38,21 @@ namespace Service
 
             var companyDto = _mapper.Map<CompanyOutputDto>(company);
             return companyDto;
+        }
+
+        public IEnumerable<CompanyOutputDto> GetCompaniesByIds(IEnumerable<Guid> ids,
+                                                                bool trackChanges)
+        {
+            if (ids is null)
+                throw new IdParametersBadRequestException();
+
+            var companies = _repository.CompanyStorage.GetCompaniesByIds(ids, trackChanges);
+            if (ids.Count() != companies.Count())
+                throw new CollectionByIdsBadRequestException();
+
+            var companyOutputDtos = _mapper.Map<IEnumerable<CompanyOutputDto>>(companies);
+
+            return companyOutputDtos;
         }
 
         public CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto)

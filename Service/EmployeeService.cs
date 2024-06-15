@@ -2,6 +2,7 @@
 using Contracts.Interfaces;
 using Entities.Entities;
 using Entities.Exceptions;
+using Entities.Exceptions.NotFound;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
