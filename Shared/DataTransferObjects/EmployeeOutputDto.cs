@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared.DataTransferObjects
 {
-    public record EmployeeDto
+    public record EmployeeOutputDto
     {
         Guid Id { get; init; }
         public string? Name { get; init; }

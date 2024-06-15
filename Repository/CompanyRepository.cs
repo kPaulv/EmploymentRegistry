@@ -13,5 +13,7 @@ namespace Repository
         public Company GetCompany(Guid companyId, bool trackChanges) => 
                         ReadByCondition(c => c.Id.Equals(companyId), trackChanges)
                         .SingleOrDefault();
+
+        public void CreateCompany(Company company) => Create(company);
     }
 }

@@ -19,7 +19,7 @@ namespace Service
             _mapper = mapper;
         }
 
-        public IEnumerable<EmployeeDto> GetEmployees(Guid companyId, bool trackChanges)
+        public IEnumerable<EmployeeOutputDto> GetEmployees(Guid companyId, bool trackChanges)
         {
             var company = _repository.CompanyStorage.GetCompany(companyId, trackChanges);
             if (company == null)
@@ -27,10 +27,10 @@ namespace Service
 
             var employees = _repository.EmployeeStorage.GetEmployees(companyId, trackChanges);
 
-            return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            return _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);
         }
 
-        public EmployeeDto GetEmployee(Guid companyId, Guid id, bool trackChanges) 
+        public EmployeeOutputDto GetEmployee(Guid companyId, Guid id, bool trackChanges) 
         {
             var company = _repository.CompanyStorage.GetCompany(companyId, trackChanges);
             if (company == null)
@@ -40,7 +40,7 @@ namespace Service
             if (employee == null)
                 throw new EmployeeNotFoundException(id);
 
-            return _mapper.Map<EmployeeDto>(employee);
+            return _mapper.Map<EmployeeOutputDto>(employee);
         }
     }
 }

@@ -4,9 +4,11 @@ namespace Service.Contracts
 {
     public interface ICompanyService
     {
-        IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges);
+        IEnumerable<CompanyOutputDto> GetAllCompanies(bool trackChanges);
 
-        CompanyDto GetCompany(Guid id, bool trackChanges);
+        CompanyOutputDto GetCompany(Guid id, bool trackChanges);
+
+        CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto); 
 
     }
 }
