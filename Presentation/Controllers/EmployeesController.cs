@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Presentation.Controllers
             return Ok(employees);
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
         public IActionResult GetEmployeeForCompany(Guid companyId, Guid id)
         {
             var employee = _serviceManager.EmployeeService
@@ -34,6 +35,20 @@ namespace Presentation.Controllers
                                                        id, 
                                                        trackChanges: false);
             return Ok(employee);
+        }
+
+        [HttpPost]
+        public IActionResult CreateEmployeeForCompany(Guid companyId, 
+            [FromBody] EmployeeInputDto employeeInput)
+        {
+            if (employeeInput is null)
+                return BadRequest("Request failed. Input employee model is empty.");
+
+            var employeeOutput = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, 
+                employeeInput, trackChanges : false);
+
+            return CreatedAtRoute("GetEmployeeForCompany", 
+                new { companyId, id = employeeOutput.Id}, employeeOutput);
         }
     }
 }

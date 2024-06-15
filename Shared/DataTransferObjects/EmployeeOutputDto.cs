@@ -8,7 +8,7 @@ namespace Shared.DataTransferObjects
 {
     public record EmployeeOutputDto
     {
-        Guid Id { get; init; }
+        public Guid Id { get; init; }
         public string? Name { get; init; }
         public string? Age { get; init; }
         public string? Position { get; init; }

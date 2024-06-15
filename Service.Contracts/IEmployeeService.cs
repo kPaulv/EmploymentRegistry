@@ -12,5 +12,9 @@ namespace Service.Contracts
         IEnumerable<EmployeeOutputDto> GetEmployees(Guid companyId, bool trackChanges);
 
         EmployeeOutputDto GetEmployee(Guid companyId, Guid id, bool trackChanges);
+
+        EmployeeOutputDto CreateEmployeeForCompany(Guid companyId,
+                                                    EmployeeInputDto employeeInputDto,
+                                                    bool trackChanges);
     }
 }

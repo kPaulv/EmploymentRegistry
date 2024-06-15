@@ -1,6 +1,7 @@
 using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,13 @@ builder.Services.ConfigureRepositoryContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
 
 // Add services to the container.
+
+// Configure custom validation in [ApiController]-marked classes
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    // disable default validation in [ApiController] attribute
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 // Add controllers (PL)
 builder.Services.AddControllers(config =>

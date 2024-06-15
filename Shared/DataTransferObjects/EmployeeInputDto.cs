@@ -6,6 +6,5 @@ using System.Threading.Tasks;
 
 namespace Shared.DataTransferObjects
 {
-    public record CompanyInputDto(string Name, string Address, string Country, 
-        IEnumerable<EmployeeInputDto> EmployeesInput);
+    public record EmployeeInputDto(string Name, int Age, string Position);
 }
