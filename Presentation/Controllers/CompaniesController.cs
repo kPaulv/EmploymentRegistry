@@ -46,5 +46,14 @@ namespace Presentation.Controllers
 
             return CreatedAtRoute("CompanyById", new { id = company.Id }, company);
         }
+
+        [HttpPost]
+        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyInputDto> companyInputDtos)
+        {
+            var companyCollection = _serviceManager.CompanyService.CreateCompanyCollection(companyInputDtos);
+
+            return CreatedAtRoute("CompanyCollection", new { companyCollection.ids }, 
+                                    companyCollection.companyOutputDtos);
+        }
     }
 }

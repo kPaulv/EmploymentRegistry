@@ -31,9 +31,10 @@ namespace Service
             return companiesDto;
         }
 
-        public CompanyOutputDto GetCompany(Guid id, bool trackChanges) {
+        public CompanyOutputDto GetCompany(Guid id, bool trackChanges)
+        {
             var company = _repository.CompanyStorage.GetCompany(id, trackChanges);
-            if(company == null) 
+            if (company == null)
                 throw new CompanyNotFoundException(id);
 
             var companyDto = _mapper.Map<CompanyOutputDto>(company);
@@ -65,6 +66,25 @@ namespace Service
             var companyOutputDto = _mapper.Map<CompanyOutputDto>(company);
 
             return companyOutputDto;
+        }
+
+        public (IEnumerable<CompanyOutputDto> companyOutputDtos, string ids) CreateCompanyCollection
+                (IEnumerable<CompanyInputDto> companyInputDtos)
+        {
+            if (companyInputDtos is null)
+                throw new CompanyCollectionBadRequest();
+
+            var companyCollection = _mapper.Map<IEnumerable<Company>>(companyInputDtos);
+            foreach (var company in companyCollection)
+            {
+                _repository.CompanyStorage.CreateCompany(company);
+            }
+            _repository.Save();
+
+            var companyOutputDtos = _mapper.Map<IEnumerable<CompanyOutputDto>>(companyCollection);
+            var ids = string.Join(',', companyOutputDtos.Select(c => c.Id));
+
+            return (companyOutputDtos: companyOutputDtos, ids: ids);
         }
     }
 }
