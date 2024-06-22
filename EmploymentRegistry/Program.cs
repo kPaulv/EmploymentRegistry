@@ -1,5 +1,6 @@
 using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
+using EmploymentRegistry.Formatter;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
@@ -39,6 +40,8 @@ builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;   // for content negotiation
     config.ReturnHttpNotAcceptable = true;
+    config.InputFormatters.Insert(0, new JsonPatchInputFormatter()
+                                            .GetJsonPatchInputFormatter());
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);

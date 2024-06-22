@@ -20,7 +20,7 @@ namespace EmploymentRegistry.Mapper
 
             CreateMap<EmployeeCreateDto, Employee>();
 
-            CreateMap<EmployeeUpdateDto, Employee>();
+            CreateMap<EmployeeUpdateDto, Employee>().ReverseMap();
 
             CreateMap<CompanyUpdateDto, Company>();
         }
