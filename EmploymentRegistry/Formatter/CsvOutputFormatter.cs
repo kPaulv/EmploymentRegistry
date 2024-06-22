@@ -15,15 +15,15 @@ namespace EmploymentRegistry.Formatter
 
         protected override bool CanWriteType(Type? type)
         {
-            if(typeof(CompanyDto).IsAssignableFrom(type) ||
-                        typeof(IEnumerable<CompanyDto>).IsAssignableFrom(type)) {
+            if(typeof(CompanyOutputDto).IsAssignableFrom(type) ||
+                        typeof(IEnumerable<CompanyOutputDto>).IsAssignableFrom(type)) {
                 return base.CanWriteType(type);
             }
 
             return false;
         }
 
-        private static void FormatCsv(StringBuilder buff, CompanyDto company)
+        private static void FormatCsv(StringBuilder buff, CompanyOutputDto company)
         {
             buff.AppendLine($"{company.Id},\"{company.Name},\"{company.FullAddress}\"");
         }
@@ -34,15 +34,15 @@ namespace EmploymentRegistry.Formatter
             var response = context.HttpContext.Response;
             var buff = new StringBuilder();
 
-            if(context.Object is IEnumerable<CompanyDto>)
+            if(context.Object is IEnumerable<CompanyOutputDto>)
             {
-                foreach(CompanyDto company in (IEnumerable<CompanyDto>)context.Object)
+                foreach(CompanyOutputDto company in (IEnumerable<CompanyOutputDto>)context.Object)
                 {
                     FormatCsv(buff, company);
                 }
             } else
             {
-                FormatCsv(buff, (CompanyDto)context.Object);
+                FormatCsv(buff, (CompanyOutputDto)context.Object);
             }
 
             await response.WriteAsync(buff.ToString());

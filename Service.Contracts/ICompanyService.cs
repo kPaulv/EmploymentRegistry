@@ -4,9 +4,20 @@ namespace Service.Contracts
 {
     public interface ICompanyService
     {
-        IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges);
+        IEnumerable<CompanyOutputDto> GetAllCompanies(bool trackChanges);
 
-        CompanyDto GetCompany(Guid id, bool trackChanges);
+        CompanyOutputDto GetCompany(Guid id, bool trackChanges);
 
+        CompanyOutputDto CreateCompany(CompanyCreateDto companyInputDto);
+
+        IEnumerable<CompanyOutputDto> GetCompaniesByIds(IEnumerable<Guid> ids, 
+                                                    bool trackChanges);
+
+        (IEnumerable<CompanyOutputDto> companyOutputDtos, string ids) CreateCompanyCollection
+            (IEnumerable<CompanyCreateDto> companyCollection);
+
+        void DeleteCompany(Guid id, bool trackChanges);
+
+        void UpdateCompany(Guid id, CompanyUpdateDto companyUpdateDto, bool trackChanges); 
     }
 }
