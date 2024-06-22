@@ -16,9 +16,11 @@ namespace EmploymentRegistry.Mapper
 
             CreateMap<Employee, EmployeeOutputDto>();
 
-            CreateMap<CompanyInputDto, Company>();
+            CreateMap<CompanyCreateDto, Company>();
 
-            CreateMap<EmployeeInputDto, Employee>();
+            CreateMap<EmployeeCreateDto, Employee>();
+
+            CreateMap<EmployeeUpdateDto, Employee>();
         }
     }
 }

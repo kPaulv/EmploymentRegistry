@@ -39,7 +39,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCompany([FromBody] CompanyInputDto companyInput)
+        public IActionResult CreateCompany([FromBody] CompanyCreateDto companyInput)
         {
             if (companyInput == null)
                 return BadRequest("Request failed. The input company model is empty.");
@@ -50,7 +50,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyInputDto> 
+        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyCreateDto> 
             companyInputDtos)
         {
             var companyCollection = _serviceManager.CompanyService

@@ -46,7 +46,7 @@ namespace Service
         }
 
         public EmployeeOutputDto CreateEmployeeForCompany(Guid companyId, 
-            EmployeeInputDto employeeInputDto, bool trackChanges) 
+            EmployeeCreateDto employeeInputDto, bool trackChanges) 
         {
             var company = _repository.CompanyStorage.GetCompany(companyId, trackChanges);
             if (company == null)
@@ -77,6 +77,28 @@ namespace Service
                 throw new EmployeeNotFoundException(employeeId);
 
             _repository.EmployeeStorage.DeleteEmployee(employee);
+            _repository.Save();
+        }
+
+        public void UpdateEmployeeForCompany(Guid companyId, Guid employeeId,
+                                             EmployeeUpdateDto employeeUpdateDto,
+                                             bool companyTrackChanges,
+                                             bool employeeTrackChanges)
+        {
+            var company = _repository.CompanyStorage.GetCompany(companyId, companyTrackChanges);
+            if (company is null)
+                throw new CompanyNotFoundException(companyId);
+
+            // if employeetrackChanges == true changes to employee variable
+            // will be tracked by DbContext
+            var employee = _repository.EmployeeStorage.GetEmployee(companyId,
+                                                                    employeeId,
+                                                                    employeeTrackChanges);
+            if (employee is null)
+                throw new EmployeeNotFoundException(employeeId);
+
+            // update employee entity from DbContext via mapping
+            _mapper.Map(employeeUpdateDto, employee);
             _repository.Save();
         }
     }

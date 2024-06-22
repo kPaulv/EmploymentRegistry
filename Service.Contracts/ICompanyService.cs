@@ -8,13 +8,13 @@ namespace Service.Contracts
 
         CompanyOutputDto GetCompany(Guid id, bool trackChanges);
 
-        CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto);
+        CompanyOutputDto CreateCompany(CompanyCreateDto companyInputDto);
 
         IEnumerable<CompanyOutputDto> GetCompaniesByIds(IEnumerable<Guid> ids, 
                                                     bool trackChanges);
 
         (IEnumerable<CompanyOutputDto> companyOutputDtos, string ids) CreateCompanyCollection
-            (IEnumerable<CompanyInputDto> companyCollection);
+            (IEnumerable<CompanyCreateDto> companyCollection);
 
         public void DeleteCompany(Guid id, bool trackChanges);
     }

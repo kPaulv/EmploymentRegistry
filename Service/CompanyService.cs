@@ -57,7 +57,7 @@ namespace Service
             return companyOutputDtos;
         }
 
-        public CompanyOutputDto CreateCompany(CompanyInputDto companyInputDto)
+        public CompanyOutputDto CreateCompany(CompanyCreateDto companyInputDto)
         {
             var company = _mapper.Map<Company>(companyInputDto);
 
@@ -70,7 +70,7 @@ namespace Service
         }
 
         public (IEnumerable<CompanyOutputDto> companyOutputDtos, string ids) CreateCompanyCollection
-                (IEnumerable<CompanyInputDto> companyInputDtos)
+                (IEnumerable<CompanyCreateDto> companyInputDtos)
         {
             if (companyInputDtos is null)
                 throw new CompanyCollectionBadRequest();

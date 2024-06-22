@@ -39,7 +39,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         public IActionResult CreateEmployeeForCompany(Guid companyId, 
-            [FromBody] EmployeeInputDto employeeInput)
+            [FromBody] EmployeeCreateDto employeeInput)
         {
             if (employeeInput is null)
                 return BadRequest("Request failed. Input employee model is empty.");
@@ -57,6 +57,23 @@ namespace Presentation.Controllers
             _serviceManager.EmployeeService.DeleteEmployeeForCompany(companyId,
                                                                      employeeId,
                                                                      trackChanges: false);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateEmployeeForCompany(Guid companyId, Guid employeeId,
+            [FromBody]EmployeeUpdateDto employeeUpdateDto)
+        {
+            if (employeeUpdateDto is null)
+                return BadRequest("Request failed. Employee update model is empty.");
+
+            _serviceManager.EmployeeService
+                            .UpdateEmployeeForCompany(companyId, 
+                                                      employeeId,
+                                                      employeeUpdateDto, 
+                                                      companyTrackChanges: false, 
+                                                      employeeTrackChanges: true);
 
             return NoContent();
         }
