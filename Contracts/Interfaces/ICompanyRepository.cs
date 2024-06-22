@@ -8,5 +8,6 @@ namespace Contracts.Interfaces
         Company GetCompany(Guid companyId, bool trackChanges);
         IEnumerable<Company> GetCompaniesByIds(IEnumerable<Guid> ids, bool trackChanges);
         void CreateCompany(Company company);
+        void DeleteCompany(Company company);
     }
 }

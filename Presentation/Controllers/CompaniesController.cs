@@ -50,12 +50,22 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyInputDto> companyInputDtos)
+        public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyInputDto> 
+            companyInputDtos)
         {
-            var companyCollection = _serviceManager.CompanyService.CreateCompanyCollection(companyInputDtos);
+            var companyCollection = _serviceManager.CompanyService
+                                                    .CreateCompanyCollection(companyInputDtos);
 
             return CreatedAtRoute("CompanyCollection", new { companyCollection.ids }, 
                                     companyCollection.companyOutputDtos);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public IActionResult DeleteCompany(Guid companyId)
+        {
+            _serviceManager.CompanyService.DeleteCompany(companyId, trackChanges: false);
+
+            return NoContent();
         }
     }
 }

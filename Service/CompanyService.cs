@@ -6,6 +6,7 @@ using Entities.Exceptions;
 using Entities.Entities;
 using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.NotFound;
+using System.Linq.Expressions;
 
 namespace Service
 {
@@ -85,6 +86,16 @@ namespace Service
             var ids = string.Join(',', companyOutputDtos.Select(c => c.Id));
 
             return (companyOutputDtos: companyOutputDtos, ids: ids);
+        }
+
+        public void DeleteCompany(Guid companyId, bool trackChanges)
+        {
+            var company = _repository.CompanyStorage.GetCompany(companyId, trackChanges);
+            if (company is null)
+                throw new CompanyNotFoundException(companyId);
+
+            _repository.CompanyStorage.DeleteCompany(company);
+            _repository.Save();
         }
     }
 }
