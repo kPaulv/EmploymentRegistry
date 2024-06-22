@@ -16,5 +16,7 @@ namespace Service.Contracts
         EmployeeOutputDto CreateEmployeeForCompany(Guid companyId,
                                                     EmployeeInputDto employeeInputDto,
                                                     bool trackChanges);
+
+        void DeleteEmployeeForCompany(Guid companyId, Guid employeeId, bool trackChanges);
     }
 }

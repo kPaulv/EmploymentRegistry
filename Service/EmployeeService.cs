@@ -61,5 +61,23 @@ namespace Service
 
             return employeeOutputDto;
         }
+
+        public void DeleteEmployeeForCompany(Guid companyId, Guid employeeId, 
+            bool trackChanges)
+        {
+            var company = _repository.CompanyStorage.GetCompany(companyId, 
+                                                                 trackChanges);
+            if (company is null)
+                throw new CompanyNotFoundException(companyId);
+
+            var employee = _repository.EmployeeStorage.GetEmployee(companyId, 
+                                                                    employeeId, 
+                                                                    trackChanges);
+            if (employee is null)
+                throw new EmployeeNotFoundException(employeeId);
+
+            _repository.EmployeeStorage.DeleteEmployee(employee);
+            _repository.Save();
+        }
     }
 }
