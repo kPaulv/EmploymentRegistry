@@ -67,5 +67,19 @@ namespace Presentation.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateCompany(Guid companyId, 
+                                            [FromBody]CompanyUpdateDto companyUpdateDto)
+        {
+            if (companyUpdateDto is null)
+                return BadRequest("Request failed. Company update model is empty.");
+
+            _serviceManager.CompanyService.UpdateCompany(companyId, 
+                                                         companyUpdateDto, 
+                                                         trackChanges: true);
+
+            return NoContent();
+        }
     }
 }
