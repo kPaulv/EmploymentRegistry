@@ -101,5 +101,32 @@ namespace Service
             _mapper.Map(employeeUpdateDto, employee);
             _repository.Save();
         }
+
+        public (EmployeeUpdateDto employeeToPatch, Employee employee) GetEmployeeForPatch
+            (Guid companyId, Guid employeeId, bool companyTrackChanges,
+            bool employeeTrackChanges)
+        {
+            var company = _repository.CompanyStorage.GetCompany(companyId, 
+                                                                companyTrackChanges);
+            if (company is null)
+                throw new CompanyNotFoundException(companyId);
+
+            var employee = _repository.EmployeeStorage.GetEmployee(companyId,
+                                                                   employeeId,
+                                                                   employeeTrackChanges);
+            if (employee is null)
+                throw new EmployeeNotFoundException(employeeId);
+
+            // for patch we return Update DTO (reverse mapping)
+            var employeeToPatch = _mapper.Map<EmployeeUpdateDto>(employee);
+
+            return (employeeToPatch, employee);
+        }
+
+        public void SaveChangesForPatch(EmployeeUpdateDto employeePatched, Employee employee)
+        {
+            _mapper.Map(employeePatched, employee);
+            _repository.Save();
+        }
     }
 }

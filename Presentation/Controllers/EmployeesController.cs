@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
@@ -42,7 +38,7 @@ namespace Presentation.Controllers
             [FromBody] EmployeeCreateDto employeeInput)
         {
             if (employeeInput is null)
-                return BadRequest("Request failed. Input employee model is empty.");
+                return BadRequest("Request failed. Input employee body is empty.");
 
             var employeeOutput = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, 
                 employeeInput, trackChanges : false);
@@ -51,7 +47,7 @@ namespace Presentation.Controllers
                 new { companyId, id = employeeOutput.Id}, employeeOutput);
         }
 
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("{employeeId:guid}")]
         public IActionResult DeleteEmployeeForCompany(Guid companyId, Guid employeeId)
         {
             _serviceManager.EmployeeService.DeleteEmployeeForCompany(companyId,
@@ -61,12 +57,12 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut("{employeeId:guid}")]
         public IActionResult UpdateEmployeeForCompany(Guid companyId, Guid employeeId,
             [FromBody]EmployeeUpdateDto employeeUpdateDto)
         {
             if (employeeUpdateDto is null)
-                return BadRequest("Request failed. Employee update model is empty.");
+                return BadRequest("Request failed. Employee update body is empty.");
 
             _serviceManager.EmployeeService
                             .UpdateEmployeeForCompany(companyId, 
@@ -78,5 +74,26 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{employeeId:guid}")]
+        public IActionResult PartiallyUpdateEmployeeForCompany(Guid companyId, 
+            Guid employeeId, [FromBody]JsonPatchDocument<EmployeeUpdateDto> patchDoc)
+        {
+            if (patchDoc is null)
+                return BadRequest("Request failed. Patch body is empty.");
+
+            // pair of type ( EmployeeUpdateDto employeeToPatch , Employee employeeEntity )
+            var tuple = _serviceManager.EmployeeService
+                                            .GetEmployeeForPatch(companyId,
+                                                                 employeeId, 
+                                                                 companyTrackChanges: false, 
+                                                                 employeeTrackChanges: true);
+
+            patchDoc.ApplyTo(tuple.employeeToPatch);
+
+            _serviceManager.EmployeeService.SaveChangesForPatch(tuple.employeeToPatch,
+                                                                        tuple.employee);
+
+            return NoContent();
+        }
     }
 }

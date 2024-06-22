@@ -3,6 +3,8 @@ using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,13 +37,25 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+// Local JsonPatchFormatter helper function for PATCH requests in controller
+NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() => 
+    new ServiceCollection().AddLogging()
+                           .AddMvc()
+                           .AddNewtonsoftJson()
+                           .Services
+                           .BuildServiceProvider()
+                           .GetRequiredService<IOptions<MvcOptions>>()
+                           .Value
+                           .InputFormatters
+                           .OfType<NewtonsoftJsonPatchInputFormatter>()
+                           .First();
+
 // Add controllers (PL)
 builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;   // for content negotiation
     config.ReturnHttpNotAcceptable = true;
-    config.InputFormatters.Insert(0, new JsonPatchInputFormatter()
-                                            .GetJsonPatchInputFormatter());
+    config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
