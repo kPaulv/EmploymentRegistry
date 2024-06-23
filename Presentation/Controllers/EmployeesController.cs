@@ -68,6 +68,10 @@ namespace Presentation.Controllers
             if (employeeUpdateDto is null)
                 return BadRequest("Request failed. Employee update body is empty.");
 
+            // update DTO validation
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             _serviceManager.EmployeeService
                             .UpdateEmployeeForCompany(companyId, 
                                                       employeeId,
