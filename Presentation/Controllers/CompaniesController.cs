@@ -79,6 +79,10 @@ namespace Presentation.Controllers
             if (companyUpdateDto is null)
                 return BadRequest("Request failed. Company update model is empty.");
 
+            // update DTO validation
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             _serviceManager.CompanyService.UpdateCompany(companyId, 
                                                          companyUpdateDto, 
                                                          trackChanges: true);
