@@ -1,9 +1,4 @@
 ﻿using Contracts.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -27,7 +22,7 @@ namespace Repository
         public IEmployeeRepository EmployeeStorage => _employeeRepository.Value;
 
         // SaveChanges()
-        public void Save() => _repositoryContext.SaveChanges();
+        public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
 
     }
 }

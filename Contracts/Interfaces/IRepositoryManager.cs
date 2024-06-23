@@ -13,6 +13,6 @@ namespace Contracts.Interfaces
         ICompanyRepository CompanyStorage { get; }
         IEmployeeRepository EmployeeStorage { get; }
         // DbContext.SaveChanges()
-        void Save();
+        Task SaveAsync();
     }
 }

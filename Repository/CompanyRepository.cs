@@ -1,5 +1,6 @@
 ﻿using Contracts.Interfaces;
 using Entities.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -7,18 +8,17 @@ namespace Repository
     {
         public CompanyRepository(RepositoryContext repositoryContext) : base(repositoryContext) { }
 
-        public IEnumerable<Company> GetAllCompanies(bool trackChanges) =>
-                        ReadAll(trackChanges).OrderBy(c => c.Name).ToList();
+        public async Task<IEnumerable<Company>> GetAllCompaniesAsync(bool trackChanges) =>
+                        await ReadAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
 
-        public Company GetCompany(Guid companyId, bool trackChanges) => 
-                        ReadByCondition(c => c.Id.Equals(companyId), trackChanges)
-                        .SingleOrDefault();
+        public async Task<Company> GetCompanyAsync(Guid companyId, bool trackChanges) => 
+                        await ReadByCondition(c => c.Id.Equals(companyId), trackChanges)
+                                .SingleOrDefaultAsync();
 
-        public IEnumerable<Company> GetCompaniesByIds(IEnumerable<Guid> ids, 
-                                                        bool trackChanges) =>
-                                     ReadByCondition(c => ids.Contains(c.Id), 
-                                                        trackChanges)
-                                     .ToList();
+        public async Task<IEnumerable<Company>> GetCompaniesByIdsAsync(IEnumerable<Guid> ids, 
+                                                                       bool trackChanges) =>
+                        await ReadByCondition(c => ids.Contains(c.Id), trackChanges)
+                                .ToListAsync();
 
         public void CreateCompany(Company company) => Create(company);
 
