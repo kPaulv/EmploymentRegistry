@@ -96,7 +96,14 @@ namespace Presentation.Controllers
                                                                  companyTrackChanges: false, 
                                                                  employeeTrackChanges: true);
 
-            patchDoc.ApplyTo(tuple.employeeToPatch);
+            // ApplyTo() applies PATCH operations to DTO and validates PATCH Doc
+            patchDoc.ApplyTo(tuple.employeeToPatch, ModelState);
+
+            // Validate modified DTO after applying PATCH operations
+            TryValidateModel(tuple.employeeToPatch);
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
 
             _serviceManager.EmployeeService.SaveChangesForPatch(tuple.employeeToPatch,
                                                                         tuple.employee);
