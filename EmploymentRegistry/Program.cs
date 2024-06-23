@@ -37,25 +37,14 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-// Local JsonPatchFormatter helper function for PATCH requests in controller
-NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() => 
-    new ServiceCollection().AddLogging()
-                           .AddMvc()
-                           .AddNewtonsoftJson()
-                           .Services
-                           .BuildServiceProvider()
-                           .GetRequiredService<IOptions<MvcOptions>>()
-                           .Value
-                           .InputFormatters
-                           .OfType<NewtonsoftJsonPatchInputFormatter>()
-                           .First();
-
 // Add controllers (PL)
 builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;   // for content negotiation
     config.ReturnHttpNotAcceptable = true;
-    config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+    config.InputFormatters.Insert(0, 
+                                  new JsonPatchInputFormatter()
+                                        .GetJsonPatchInputFormatter()); // for PATCH req
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
