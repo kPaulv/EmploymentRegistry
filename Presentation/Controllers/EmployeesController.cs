@@ -40,6 +40,10 @@ namespace Presentation.Controllers
             if (employeeInput is null)
                 return BadRequest("Request failed. Input employee body is empty.");
 
+            // validation via attributes in DTO record
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var employeeOutput = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, 
                 employeeInput, trackChanges : false);
 
