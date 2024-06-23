@@ -44,6 +44,10 @@ namespace Presentation.Controllers
             if (companyInput == null)
                 return BadRequest("Request failed. The input company model is empty.");
 
+            // custom validation of DTO via attributes
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var company = _serviceManager.CompanyService.CreateCompany(companyInput);
 
             return CreatedAtRoute("CompanyById", new { id = company.Id }, company);
@@ -74,6 +78,10 @@ namespace Presentation.Controllers
         {
             if (companyUpdateDto is null)
                 return BadRequest("Request failed. Company update model is empty.");
+
+            // update DTO validation
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
 
             _serviceManager.CompanyService.UpdateCompany(companyId, 
                                                          companyUpdateDto, 

@@ -40,6 +40,10 @@ namespace Presentation.Controllers
             if (employeeInput is null)
                 return BadRequest("Request failed. Input employee body is empty.");
 
+            // validation via attributes in DTO record
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var employeeOutput = _serviceManager.EmployeeService.CreateEmployeeForCompany(companyId, 
                 employeeInput, trackChanges : false);
 
@@ -63,6 +67,10 @@ namespace Presentation.Controllers
         {
             if (employeeUpdateDto is null)
                 return BadRequest("Request failed. Employee update body is empty.");
+
+            // update DTO validation
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
 
             _serviceManager.EmployeeService
                             .UpdateEmployeeForCompany(companyId, 
@@ -88,7 +96,14 @@ namespace Presentation.Controllers
                                                                  companyTrackChanges: false, 
                                                                  employeeTrackChanges: true);
 
-            patchDoc.ApplyTo(tuple.employeeToPatch);
+            // ApplyTo() applies PATCH operations to DTO and validates PATCH Doc
+            patchDoc.ApplyTo(tuple.employeeToPatch, ModelState);
+
+            // Validate modified DTO after applying PATCH operations
+            TryValidateModel(tuple.employeeToPatch);
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
 
             _serviceManager.EmployeeService.SaveChangesForPatch(tuple.employeeToPatch,
                                                                         tuple.employee);

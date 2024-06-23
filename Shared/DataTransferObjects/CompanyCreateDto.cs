@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.DataTransferObjects.BaseDTO;
 
 namespace Shared.DataTransferObjects
 {
-    public record CompanyCreateDto(string Name, string Address, string Country, 
-        IEnumerable<EmployeeCreateDto> EmployeesInput);
+    public record CompanyCreateDto : CompanyInputDto;
 }
