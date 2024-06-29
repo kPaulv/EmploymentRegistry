@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 using NLog;
+using Presentation.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureRepositoryContext(builder.Configuration);
 // Auto-Mapper
 builder.Services.AddAutoMapper(typeof(Program));
+// Validation Action Filter
+builder.Services.AddScoped<ValidationFilterAttribute>();
 
 // Add services to the container.
 

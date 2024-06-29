@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -33,23 +34,17 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompanyAsync(Guid companyId, 
-            [FromBody] EmployeeCreateDto employeeInput)
+            [FromBody] EmployeeCreateDto employeeInputDto)
         {
-            if (employeeInput is null)
-                return BadRequest("Request failed. Input employee body is empty.");
-
-            // validation via attributes in DTO record
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
-            var employeeOutput = await 
+            var employeeOutputDto = await 
                 _serviceManager.EmployeeService.CreateEmployeeForCompanyAsync(companyId, 
-                                                                              employeeInput, 
+                                                                              employeeInputDto, 
                                                                               trackChanges : false);
 
             return CreatedAtRoute("GetEmployeeForCompany", 
-                new { companyId, id = employeeOutput.Id}, employeeOutput);
+                new { companyId, id = employeeOutputDto.Id}, employeeOutputDto);
         }
 
         [HttpDelete("{employeeId:guid}")]
@@ -64,16 +59,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("{employeeId:guid}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid employeeId,
             [FromBody]EmployeeUpdateDto employeeUpdateDto)
         {
-            if (employeeUpdateDto is null)
-                return BadRequest("Request failed. Employee update body is empty.");
-
-            // update DTO validation
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             await 
                 _serviceManager.EmployeeService.UpdateEmployeeForCompanyAsync(companyId, 
                                                                               employeeId,

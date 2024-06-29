@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 using Presentation.ModelBinders;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -42,22 +43,17 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CompanyCreateDto companyInput)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyCreateDto companyInputDto)
         {
-            if (companyInput == null)
-                return BadRequest("Request failed. The input company model is empty.");
-
-            // custom validation of DTO via attributes
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             var company = await 
-                _serviceManager.CompanyService.CreateCompanyAsync(companyInput);
+                _serviceManager.CompanyService.CreateCompanyAsync(companyInputDto);
 
             return CreatedAtRoute("CompanyById", new { id = company.Id }, company);
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyCreateDto> 
             companyInputDtos)
         {
@@ -77,16 +73,10 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateCompany(Guid companyId, 
                                             [FromBody]CompanyUpdateDto companyUpdateDto)
         {
-            if (companyUpdateDto is null)
-                return BadRequest("Request failed. Company update model is empty.");
-
-            // update DTO validation
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             await _serviceManager.CompanyService.UpdateCompanyAsync(companyId, 
                                                                     companyUpdateDto, 
                                                                     trackChanges: true);
