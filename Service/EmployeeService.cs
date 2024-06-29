@@ -5,6 +5,7 @@ using Entities.Exceptions;
 using Entities.Exceptions.NotFound;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service
 {
@@ -44,11 +45,12 @@ namespace Service
         }
 
         public async Task<IEnumerable<EmployeeOutputDto>> GetEmployeesAsync
-            (Guid companyId, bool trackChanges)
+            (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
             await CheckCompanyExistsAsync(companyId, trackChanges);
 
-            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId, 
+            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId,
+                                                                                employeeParams,         
                                                                                 trackChanges);
 
             return _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);

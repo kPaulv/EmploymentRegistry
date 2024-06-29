@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Presentation.Controllers
 {
@@ -16,11 +17,13 @@ namespace Presentation.Controllers
             _serviceManager = serviceManager;
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId)
+        public async Task<IActionResult> GetEmployeesForCompany
+            (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestparams)
         {
             var employees = await 
-                _serviceManager.EmployeeService.GetEmployeesAsync(companyId, 
-                                                                    trackChanges : false);
+                _serviceManager.EmployeeService.GetEmployeesAsync(companyId,
+                                                                  employeeRequestparams,
+                                                                  trackChanges : false);
             return Ok(employees);
         }
 
@@ -35,7 +38,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> CreateEmployeeForCompanyAsync(Guid companyId, 
+        public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, 
             [FromBody] EmployeeCreateDto employeeInputDto)
         {
             var employeeOutputDto = await 
