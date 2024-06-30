@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -20,11 +21,16 @@ namespace Presentation.Controllers
         public async Task<IActionResult> GetEmployeesForCompany
             (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestparams)
         {
-            var employees = await 
+            // get the tuple (employees , metadata{pageSize, pageCount})
+            var employeesPagedTuple = await 
                 _serviceManager.EmployeeService.GetEmployeesAsync(companyId,
                                                                   employeeRequestparams,
                                                                   trackChanges : false);
-            return Ok(employees);
+
+            Response.Headers.Add("X-Pagination", 
+                                 JsonSerializer.Serialize(employeesPagedTuple.metaData));
+
+            return Ok(employeesPagedTuple.employeeDtos);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
