@@ -5,6 +5,7 @@ using Entities.Exceptions;
 using Entities.Exceptions.NotFound;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Service
 {
@@ -43,15 +44,21 @@ namespace Service
             return employee;
         }
 
-        public async Task<IEnumerable<EmployeeOutputDto>> GetEmployeesAsync
-            (Guid companyId, bool trackChanges)
+        public async Task<(IEnumerable<EmployeeOutputDto> employeeDtos, MetaData metaData)> GetEmployeesAsync
+            (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
             await CheckCompanyExistsAsync(companyId, trackChanges);
 
-            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId, 
+            // get the PagedList of employees from Repository(certain page and amount of items on it)
+            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId,
+                                                                                employeeParams,         
                                                                                 trackChanges);
 
-            return _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);
+            // map PageList of employees into list of Employee DTOs
+            var employeeListDto = _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);
+
+            // return tuple - (Employee DTOs , EmployeePageList.MetaData)
+            return (employeeDtos: employeeListDto, metaData: employees.MetaData);
         }
 
         public async Task<EmployeeOutputDto> GetEmployeeAsync

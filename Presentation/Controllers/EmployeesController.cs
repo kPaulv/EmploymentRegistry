@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 
 namespace Presentation.Controllers
 {
@@ -16,12 +18,19 @@ namespace Presentation.Controllers
             _serviceManager = serviceManager;
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId)
+        public async Task<IActionResult> GetEmployeesForCompany
+            (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestparams)
         {
-            var employees = await 
-                _serviceManager.EmployeeService.GetEmployeesAsync(companyId, 
-                                                                    trackChanges : false);
-            return Ok(employees);
+            // get the tuple (employees , metadata{pageSize, pageCount})
+            var employeesPagedTuple = await 
+                _serviceManager.EmployeeService.GetEmployeesAsync(companyId,
+                                                                  employeeRequestparams,
+                                                                  trackChanges : false);
+
+            Response.Headers.Add("X-Pagination", 
+                                 JsonSerializer.Serialize(employeesPagedTuple.metaData));
+
+            return Ok(employeesPagedTuple.employeeDtos);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
@@ -35,7 +44,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> CreateEmployeeForCompanyAsync(Guid companyId, 
+        public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, 
             [FromBody] EmployeeCreateDto employeeInputDto)
         {
             var employeeOutputDto = await 
