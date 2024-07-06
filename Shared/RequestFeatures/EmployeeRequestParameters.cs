@@ -13,5 +13,7 @@ namespace Shared.RequestFeatures
         public uint MaxAge { get; set; } = int.MaxValue;
 
         public bool IsAgeRangeValid => MaxAge > MinAge;
+
+        public string? SearchTerm { get; set; }
     }
 }
