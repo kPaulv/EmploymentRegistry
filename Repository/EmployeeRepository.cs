@@ -1,6 +1,7 @@
 ﻿using Contracts.Interfaces;
 using Entities.Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using Shared.RequestFeatures;
 
 namespace Repository
@@ -13,9 +14,9 @@ namespace Repository
             (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
             var employees = 
-                await ReadByCondition(e => e.CompanyId.Equals(companyId) && 
-                                        (e.Age >= employeeParams.MinAge && 
-                                         e.Age <= employeeParams.MaxAge), trackChanges)
+                await ReadByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+                        .FilterByAge(employeeParams.MinAge, employeeParams.MaxAge)
+                        .Search(employeeParams.SearchTerm)
                         .OrderBy(e => e.Name)
                         .Skip((employeeParams.PageNumber - 1) * employeeParams.PageSize)
                         .Take(employeeParams.PageSize)
