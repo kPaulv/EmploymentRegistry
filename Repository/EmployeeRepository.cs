@@ -13,7 +13,9 @@ namespace Repository
             (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
             var employees = 
-                await ReadByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+                await ReadByCondition(e => e.CompanyId.Equals(companyId) && 
+                                        (e.Age >= employeeParams.MinAge && 
+                                         e.Age <= employeeParams.MaxAge), trackChanges)
                         .OrderBy(e => e.Name)
                         .Skip((employeeParams.PageNumber - 1) * employeeParams.PageSize)
                         .Take(employeeParams.PageSize)
