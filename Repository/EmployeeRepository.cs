@@ -17,7 +17,7 @@ namespace Repository
                 await ReadByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
                         .FilterByAge(employeeParams.MinAge, employeeParams.MaxAge)
                         .Search(employeeParams.SearchTerm)
-                        .OrderBy(e => e.Name)
+                        .Sort(employeeParams.OrderBy)
                         .Skip((employeeParams.PageNumber - 1) * employeeParams.PageSize)
                         .Take(employeeParams.PageSize)
                         .ToListAsync();

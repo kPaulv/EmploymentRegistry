@@ -9,6 +9,8 @@ namespace Shared.RequestFeatures
 {
     public class EmployeeRequestParameters : RequestParameters
     {
+        public EmployeeRequestParameters() => OrderBy = "name"; // default sorting field
+
         public uint MinAge { get; set; }
         public uint MaxAge { get; set; } = int.MaxValue;
 

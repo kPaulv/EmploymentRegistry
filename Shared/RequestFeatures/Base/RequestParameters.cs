@@ -17,5 +17,8 @@
                 _pageSize = value > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : value;
             }
         }
+
+        // specify the order field and the order type(asc/desc)
+        public string? OrderBy { get; set; }
     }
 }
