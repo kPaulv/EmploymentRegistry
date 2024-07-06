@@ -1,4 +1,5 @@
 ﻿using Contracts.Interfaces;
+using Entities.Entities;
 using System.Dynamic;
 using System.Reflection;
 
@@ -14,14 +15,14 @@ namespace Service
                                                  BindingFlags.Instance);
         }
 
-        public ExpandoObject ShapeData(T entity, string fieldsString)
+        public ShapedEntity ShapeData(T entity, string fieldsString)
         {
             var requiredProps = GetRequiredProperties(fieldsString);
 
             return RetrieveShapedDataEntity(entity, requiredProps);
         }
 
-        public IEnumerable<ExpandoObject> ShapeData(IEnumerable<T> entities, string fieldsString)
+        public IEnumerable<ShapedEntity> ShapeData(IEnumerable<T> entities, string fieldsString)
         {
             var requiredProps = GetRequiredProperties(fieldsString);
 
@@ -43,7 +44,8 @@ namespace Service
             {
                 // find a property in T that equals ["name", "age"("age ".Trim())]
                 var prop = Properties.FirstOrDefault(p =>
-                    p.Name.Equals(field.Trim(), StringComparison.InvariantCulture));
+                    p.Name.ToLower().Equals(field.Trim().ToLower(), 
+                                            StringComparison.InvariantCulture));
 
                 if(prop is null)
                     continue;
@@ -55,25 +57,25 @@ namespace Service
             return requiredProps;
         }
 
-        private ExpandoObject RetrieveShapedDataEntity(T entity, IEnumerable<PropertyInfo> props)
+        private ShapedEntity RetrieveShapedDataEntity(T entity, IEnumerable<PropertyInfo> props)
         {
-            var shapedEntity = new ExpandoObject();
+            var shapedEntity = new ShapedEntity();
 
             foreach(var prop in props)
             {
                 // use reflection to get Value of T's property with the name stored in prop
                 var propValueObject = prop.GetValue(entity);
                 // add to dict key = prop.Name, value = property Value from Entity as Object
-                shapedEntity.TryAdd(prop.Name, propValueObject);
+                shapedEntity.Entity.TryAdd(prop.Name, propValueObject);
             }
 
             return shapedEntity;
         }
 
-        private IEnumerable<ExpandoObject> RetrieveShapedDataCollection
+        private IEnumerable<ShapedEntity> RetrieveShapedDataCollection
             (IEnumerable<T> entities, IEnumerable<PropertyInfo> props)
         {
-            var shapedCollection = new List<ExpandoObject>();
+            var shapedCollection = new List<ShapedEntity>();
 
             foreach (var entity in entities)
             {

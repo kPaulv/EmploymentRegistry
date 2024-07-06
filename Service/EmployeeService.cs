@@ -7,6 +7,7 @@ using Entities.Exceptions.NotFound;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using System.Dynamic;
 
 namespace Service
 {
@@ -15,12 +16,17 @@ namespace Service
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
+        private readonly IDataShaper<EmployeeOutputDto> _dataShaper;
 
-        public EmployeeService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public EmployeeService(IRepositoryManager repository, 
+                                ILoggerManager logger, 
+                                IMapper mapper,
+                                IDataShaper<EmployeeOutputDto> dataShaper)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _dataShaper = dataShaper;
         }
 
         // DRY - 2 helper methods to check if employee of company exists
@@ -45,7 +51,7 @@ namespace Service
             return employee;
         }
 
-        public async Task<(IEnumerable<EmployeeOutputDto> employeeDtos, MetaData metaData)> 
+        public async Task<(IEnumerable<ShapedEntity> employees, MetaData metaData)> 
             GetEmployeesAsync
                 (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
@@ -62,8 +68,11 @@ namespace Service
             // map PageList of employees into list of Employee DTOs
             var employeeListDto = _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);
 
+            // shape mapped data
+            var shapedEmployees = _dataShaper.ShapeData(employeeListDto, employeeParams.Fields);
+
             // return tuple - (Employee DTOs , EmployeePageList.MetaData)
-            return (employeeDtos: employeeListDto, metaData: employees.MetaData);
+            return (employees: shapedEmployees, metaData: employees.MetaData);
         }
 
         public async Task<EmployeeOutputDto> GetEmployeeAsync

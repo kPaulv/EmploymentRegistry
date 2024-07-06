@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 using NLog;
 using Presentation.ActionFilters;
+using Service;
+using Shared.DataTransferObjects;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,17 +20,21 @@ LogManager.Setup()
 // Add Service Configuration by Extension Methods.
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIISIntegration();
-// Contracts.Logger
 builder.Services.ConfigureLoggerService();
 // Repository.RepositoryManager (DAL)
 builder.Services.ConfigureRepositoryManager();
+// DbContext (DAL)
+builder.Services.ConfigureRepositoryContext(builder.Configuration);
 // Service.ServiceManager (BLL)
 builder.Services.ConfigureServiceManager();
-// DbContext
-builder.Services.ConfigureRepositoryContext(builder.Configuration);
-// Auto-Mapper
+// Auto-Mapper (BLL)
 builder.Services.AddAutoMapper(typeof(Program));
-// Validation Action Filter
+// Data Shapers (BLL)
+builder.Services.AddScoped<IDataShaper<EmployeeOutputDto>, 
+                                DataShaper<EmployeeOutputDto>>();
+builder.Services.AddScoped<IDataShaper<CompanyOutputDto>,
+                                DataShaper<CompanyOutputDto>>();
+// Validation Action Filter (PL)
 builder.Services.AddScoped<ValidationFilterAttribute>();
 
 // Add services to the container.

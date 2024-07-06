@@ -30,7 +30,7 @@ namespace Presentation.Controllers
             Response.Headers.Add("X-Pagination", 
                                  JsonSerializer.Serialize(employeesPagedTuple.metaData));
 
-            return Ok(employeesPagedTuple.employeeDtos);
+            return Ok(employeesPagedTuple.employees);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]

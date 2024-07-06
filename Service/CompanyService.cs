@@ -16,12 +16,17 @@ namespace Service
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
+        private readonly IDataShaper<CompanyOutputDto> _dataShaper;
 
-        public CompanyService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public CompanyService(IRepositoryManager repository, 
+                                ILoggerManager logger, 
+                                IMapper mapper, 
+                                IDataShaper<CompanyOutputDto> dataShaper)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _dataShaper = dataShaper;
         }
 
         // DRY - helper method to check if Company exists
