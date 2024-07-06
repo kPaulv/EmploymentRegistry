@@ -20,5 +20,8 @@
 
         // specify the order field and the order type(asc/desc)
         public string? OrderBy { get; set; }
+
+        // specify the fields for Data Shaping
+        public string? Fields { get; set; }
     }
 }
