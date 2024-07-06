@@ -2,6 +2,7 @@
 using Contracts.Interfaces;
 using Entities.Entities;
 using Entities.Exceptions;
+using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.NotFound;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -44,9 +45,13 @@ namespace Service
             return employee;
         }
 
-        public async Task<(IEnumerable<EmployeeOutputDto> employeeDtos, MetaData metaData)> GetEmployeesAsync
-            (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
+        public async Task<(IEnumerable<EmployeeOutputDto> employeeDtos, MetaData metaData)> 
+            GetEmployeesAsync
+                (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
         {
+            if (!employeeParams.IsAgeRangeValid)
+                throw new AgeRangeBadRequestException();
+
             await CheckCompanyExistsAsync(companyId, trackChanges);
 
             // get the PagedList of employees from Repository(certain page and amount of items on it)
