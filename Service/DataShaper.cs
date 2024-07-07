@@ -1,6 +1,5 @@
 ﻿using Contracts.Interfaces;
 using Entities.Entities;
-using System.Dynamic;
 using System.Reflection;
 
 namespace Service
@@ -68,6 +67,10 @@ namespace Service
                 // add to dict key = prop.Name, value = property Value from Entity as Object
                 shapedEntity.Entity.TryAdd(prop.Name, propValueObject);
             }
+
+            // for HATEOAS we need Id, but Shaping cuts id off response
+            var entityId = entity.GetType().GetProperty("Id");
+            shapedEntity.Id = entityId;
 
             return shapedEntity;
         }
