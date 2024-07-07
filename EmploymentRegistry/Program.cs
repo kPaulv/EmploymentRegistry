@@ -37,6 +37,9 @@ builder.Services.AddScoped<IDataShaper<CompanyOutputDto>,
 // Validation Action Filter (PL)
 builder.Services.AddScoped<ValidationFilterAttribute>();
 
+// Media type (Accept header) Action Filter (PL)
+builder.Services.AddScoped<ValidationMediaTypeAttribute>();
+
 // Add services to the container.
 
 // Configure custom validation in [ApiController]-marked classes

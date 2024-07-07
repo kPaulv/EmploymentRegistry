@@ -18,6 +18,7 @@ namespace Presentation.Controllers
             _serviceManager = serviceManager;
 
         [HttpGet]
+        [ServiceFilter(typeof(ValidationMediaTypeAttribute))]
         public async Task<IActionResult> GetEmployeesForCompany
             (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestparams)
         {
