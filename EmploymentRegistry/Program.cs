@@ -58,6 +58,9 @@ builder.Services.AddControllers(config =>
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
+// Add custom JSON, XML media types (Content-Type's)
+builder.Services.AddCustomMediaTypes();
+
 var app = builder.Build();
 
 // configure Exception handler

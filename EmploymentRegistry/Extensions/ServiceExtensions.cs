@@ -1,6 +1,8 @@
 ﻿using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
 using LoggerService;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Service;
@@ -26,7 +28,34 @@ namespace EmploymentRegistry.Extensions
         public static IMvcBuilder AddCustomCsvFormatter(this IMvcBuilder mvcBuilder) =>
            mvcBuilder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
 
-        // Configure DbContext
+        // Configure custom Media types for responses
+        public static void AddCustomMediaTypes(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.Configure<MvcOptions>(config =>
+            {
+                var jsonOutputFormatter = config.OutputFormatters
+                                                    .OfType<SystemTextJsonOutputFormatter>()?
+                                                    .FirstOrDefault();
+                
+                if(jsonOutputFormatter != null)
+                {
+                    jsonOutputFormatter.SupportedMediaTypes.
+                                            Add("application/vnd.kpaulv.hateoas+json");
+                }
+
+                var xmlOutputFormatter = config.OutputFormatters
+                                                    .OfType<XmlDataContractSerializerOutputFormatter>()?
+                                                    .FirstOrDefault();
+
+                if(xmlOutputFormatter != null)
+                {
+                    xmlOutputFormatter.SupportedMediaTypes.
+                                            Add("application/vnd.kpaulv.hateoas+json");
+                }
+            });
+        }
+
+        // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
                                                         IConfiguration configuration) =>
             serviceDescriptors.AddDbContext<RepositoryContext>(options =>
