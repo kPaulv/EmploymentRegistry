@@ -4,6 +4,7 @@ using Entities.Entities;
 using Entities.Exceptions;
 using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.NotFound;
+using Entities.LinkModels;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
@@ -16,17 +17,17 @@ namespace Service
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        private readonly IDataShaper<EmployeeOutputDto> _dataShaper;
+        private readonly IEmployeeLinks _employeeLinks;
 
         public EmployeeService(IRepositoryManager repository, 
                                 ILoggerManager logger, 
                                 IMapper mapper,
-                                IDataShaper<EmployeeOutputDto> dataShaper)
+                                IEmployeeLinks employeeLinks)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
-            _dataShaper = dataShaper;
+            _employeeLinks = employeeLinks;
         }
 
         // DRY - 2 helper methods to check if employee of company exists
@@ -51,28 +52,29 @@ namespace Service
             return employee;
         }
 
-        public async Task<(IEnumerable<ShapedEntity> employees, MetaData metaData)> 
+        public async Task<(LinkResponse linkResponse, MetaData metaData)> 
             GetEmployeesAsync
-                (Guid companyId, EmployeeRequestParameters employeeParams, bool trackChanges)
+                (Guid companyId, LinkParameters linkParams, bool trackChanges)
         {
-            if (!employeeParams.IsAgeRangeValid)
+            if (!linkParams.EmployeeParameters.IsAgeRangeValid)
                 throw new AgeRangeBadRequestException();
 
             await CheckCompanyExistsAsync(companyId, trackChanges);
 
             // get the PagedList of employees from Repository(certain page and amount of items on it)
-            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId,
-                                                                                employeeParams,         
-                                                                                trackChanges);
+            var employees = await _repository.EmployeeStorage.GetEmployeesAsync(companyId, 
+                linkParams.EmployeeParameters, trackChanges);
 
             // map PageList of employees into list of Employee DTOs
             var employeeListDto = _mapper.Map<IEnumerable<EmployeeOutputDto>>(employees);
 
-            // shape mapped data
-            var shapedEmployees = _dataShaper.ShapeData(employeeListDto, employeeParams.Fields);
+            // shape mapped data (we try generation linked and shaped response, it will at least be shaped)
+            var employeeLinkResponse = _employeeLinks.TryGenerateLinks(employeeListDto,
+                companyId, linkParams.EmployeeParameters.Fields, linkParams.HttpContext);
+            //var shapedEmployees = _dataShaper.ShapeData(employeeListDto, employeeParams.Fields);
 
             // return tuple - (Employee DTOs , EmployeePageList.MetaData)
-            return (employees: shapedEmployees, metaData: employees.MetaData);
+            return (linkResponse: employeeLinkResponse, metaData: employees.MetaData);
         }
 
         public async Task<EmployeeOutputDto> GetEmployeeAsync

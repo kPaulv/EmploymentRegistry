@@ -5,6 +5,7 @@ using Presentation.ActionFilters;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using Entities.LinkModels;
 
 namespace Presentation.Controllers
 {
@@ -20,18 +21,25 @@ namespace Presentation.Controllers
         [HttpGet]
         [ServiceFilter(typeof(ValidationMediaTypeAttribute))]
         public async Task<IActionResult> GetEmployeesForCompany
-            (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestparams)
+            (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestParams)
         {
-            // get the tuple (employees , metadata{pageSize, pageCount})
-            var employeesPagedTuple = await 
+            // transform EmployeeRequestParameters to LinkParameters
+            var linkParams = new LinkParameters(employeeRequestParams, HttpContext);
+
+            // get the tuple (link response , metadata{pageSize, pageCount})
+            // this link response contains paged, filtered, sorted, shaped employees 
+            // with or without Links
+            var linkResponseTuple = await 
                 _serviceManager.EmployeeService.GetEmployeesAsync(companyId,
-                                                                  employeeRequestparams,
+                                                                  linkParams,
                                                                   trackChanges : false);
 
             Response.Headers.Add("X-Pagination", 
-                                 JsonSerializer.Serialize(employeesPagedTuple.metaData));
+                                 JsonSerializer.Serialize(linkResponseTuple.metaData));
 
-            return Ok(employeesPagedTuple.employees);
+            return linkResponseTuple.linkResponse.HasLinks ?
+                Ok(linkResponseTuple.linkResponse.LinkedEntities) :
+                    Ok(linkResponseTuple.linkResponse.ShapedEntities);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]

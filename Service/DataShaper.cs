@@ -69,8 +69,8 @@ namespace Service
             }
 
             // for HATEOAS we need Id, but Shaping cuts id off response
-            var entityId = entity.GetType().GetProperty("Id");
-            shapedEntity.Id = entityId;
+            var entityIdPropertyInfo = entity.GetType().GetProperty("Id");
+            shapedEntity.Id = (Guid)entityIdPropertyInfo.GetValue(entity);
 
             return shapedEntity;
         }

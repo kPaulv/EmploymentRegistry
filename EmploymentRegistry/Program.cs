@@ -1,6 +1,7 @@
 using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
+using EmploymentRegistry.Utility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -39,6 +40,9 @@ builder.Services.AddScoped<ValidationFilterAttribute>();
 
 // Media type (Accept header) Action Filter (PL)
 builder.Services.AddScoped<ValidationMediaTypeAttribute>();
+
+// Links for Employee HATEOAS responses (UTILITY)
+builder.Services.AddScoped<IEmployeeLinks, EmployeeLinks>();
 
 // Add services to the container.
 
