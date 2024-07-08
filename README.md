@@ -21,4 +21,5 @@
 
 ### TODO:
 + Sorting, Filtering, Key-Search and Data Shaping for all Entities
++ HATEOAS for all Entities
 + Rewrite Entity and Link models
