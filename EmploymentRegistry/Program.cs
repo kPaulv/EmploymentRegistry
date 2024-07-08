@@ -1,6 +1,7 @@
 using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
+using EmploymentRegistry.Utility;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -37,6 +38,12 @@ builder.Services.AddScoped<IDataShaper<CompanyOutputDto>,
 // Validation Action Filter (PL)
 builder.Services.AddScoped<ValidationFilterAttribute>();
 
+// Media type (Accept header) Action Filter (PL)
+builder.Services.AddScoped<ValidationMediaTypeAttribute>();
+
+// Links for Employee HATEOAS responses (UTILITY)
+builder.Services.AddScoped<IEmployeeLinks, EmployeeLinks>();
+
 // Add services to the container.
 
 // Configure custom validation in [ApiController]-marked classes
@@ -57,6 +64,9 @@ builder.Services.AddControllers(config =>
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
+
+// Add custom JSON, XML media types (Content-Type's)
+builder.Services.AddCustomMediaTypes();
 
 var app = builder.Build();
 

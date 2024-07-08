@@ -13,14 +13,14 @@ namespace Service
         public ServiceManager(IRepositoryManager repository, 
                                 ILoggerManager logger, 
                                 IMapper mapper, 
-                                IDataShaper<EmployeeOutputDto> employeeDataShaper,
-                                IDataShaper<CompanyOutputDto> companyDataShaper)
+                                IEmployeeLinks employeeLinks)
         {
+            // TODO: Implement HATEOAS for Companies (Service CompanyLinks)
             _companyService = new Lazy<ICompanyService>(() => 
-                new CompanyService(repository, logger, mapper, companyDataShaper)
+                new CompanyService(repository, logger, mapper)
             );
             _employeeService = new Lazy<IEmployeeService>(() => 
-                new EmployeeService(repository, logger, mapper, employeeDataShaper)
+                new EmployeeService(repository, logger, mapper, employeeLinks)
             );
         }
 
