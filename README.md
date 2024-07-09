@@ -17,6 +17,8 @@
 + BLL: Services for CREATE, UPDATE, READ, DELETE
 + BLL: Searching by Key, Data Shaping, Sorting, Filtering (partly)
 + PL: Controllers in a separate project, injected in Program entry point into Services collection (Controllers as Services)
++ PL: API Versioning
++ PL: All HTTP Verbs: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 
 ### TODO:
