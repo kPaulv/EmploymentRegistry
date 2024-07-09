@@ -75,9 +75,13 @@ namespace EmploymentRegistry.Extensions
             });
         }
 
-        // Add Response Cache
+        // Add Response Cache (PL)
         public static void ConfigureResponseCaching(this IServiceCollection serviceDescriptors) =>
             serviceDescriptors.AddResponseCaching(options => { });
+
+        // Add Response Cache Headers(for Validation & Expiration) (PL)
+        public static void ConfigureResponseCacheHeaders(this IServiceCollection serviceDescriptors) =>
+            serviceDescriptors.AddHttpCacheHeaders(options => { });
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,

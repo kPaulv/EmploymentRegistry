@@ -73,8 +73,11 @@ builder.Services.AddCustomMediaTypes();
 // Add API Versioning mechanism (PL)
 builder.Services.ConfigureVersioning();
 
-// Add Response Cache
+// Add Response Cache (PL)
 builder.Services.ConfigureResponseCaching();
+
+// Add Response Cache HTTP Headers (Validation, Expiration) (PL)
+builder.Services.ConfigureResponseCacheHeaders();
 
 var app = builder.Build();
 
@@ -98,6 +101,8 @@ app.UseCors("CorsPolicy");
 
 // Caching Middleware execution should be after CORS according to MSDN
 app.UseResponseCaching();
+
+app.UseHttpCacheHeaders();
 
 app.UseAuthorization();
 
