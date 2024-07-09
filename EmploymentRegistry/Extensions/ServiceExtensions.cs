@@ -57,6 +57,7 @@ namespace EmploymentRegistry.Extensions
             });
         }
 
+        // Add Versioning for API (PL)
         public static void ConfigureVersioning(this IServiceCollection serviceDescriptors)
         {
             serviceDescriptors.AddApiVersioning(options =>
@@ -73,6 +74,10 @@ namespace EmploymentRegistry.Extensions
                                         .HasDeprecatedApiVersion(new ApiVersion(2, 0));
             });
         }
+
+        // Add Response Cache
+        public static void ConfigureResponseCaching(this IServiceCollection serviceDescriptors) =>
+            serviceDescriptors.AddResponseCaching(options => { });
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,

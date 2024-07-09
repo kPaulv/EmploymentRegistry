@@ -8,6 +8,7 @@ namespace Presentation.Controllers
 {
     [Route("api/companies")]
     [ApiController]
+    [ResponseCache(CacheProfileName = "ControllerConfigCacheProfile")]
     public class CompaniesController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
