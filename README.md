@@ -25,3 +25,5 @@
 + Sorting, Filtering, Key-Search and Data Shaping for all Entities
 + HATEOAS for all Entities
 + Rewrite Entity and Link models
++ SETUP CACHE SERVER FOR CACHE VALIDATION(Apache Traffic Server or Varnish or Squid or other)
+
