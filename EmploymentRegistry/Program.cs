@@ -61,6 +61,8 @@ builder.Services.AddControllers(config =>
     config.InputFormatters.Insert(0, 
                                   new JsonPatchInputFormatter()
                                         .GetJsonPatchInputFormatter()); // for PATCH req
+    config.CacheProfiles.Add("ControllerConfigCacheProfile", 
+                                new CacheProfile { Duration = 90});    // cache config in startup
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
@@ -70,6 +72,12 @@ builder.Services.AddCustomMediaTypes();
 
 // Add API Versioning mechanism (PL)
 builder.Services.ConfigureVersioning();
+
+// Add Response Cache (PL)
+builder.Services.ConfigureResponseCaching();
+
+// Add Response Cache HTTP Headers (Validation, Expiration) (PL)
+builder.Services.ConfigureResponseCacheHeaders();
 
 var app = builder.Build();
 
@@ -90,6 +98,11 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.UseCors("CorsPolicy");
+
+// Caching Middleware execution should be after CORS according to MSDN
+app.UseResponseCaching();
+
+app.UseHttpCacheHeaders();
 
 app.UseAuthorization();
 
