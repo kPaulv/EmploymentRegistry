@@ -3,7 +3,9 @@ using EmploymentRegistry.Formatter;
 using LoggerService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Presentation.Controllers;
 using Repository;
 using Service;
 using Service.Contracts;
@@ -28,7 +30,7 @@ namespace EmploymentRegistry.Extensions
         public static IMvcBuilder AddCustomCsvFormatter(this IMvcBuilder mvcBuilder) =>
            mvcBuilder.AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter()));
 
-        // Configure custom Media types for responses
+        // Configure custom Media types for responses (PL)
         public static void AddCustomMediaTypes(this IServiceCollection serviceDescriptors)
         {
             serviceDescriptors.Configure<MvcOptions>(config =>
@@ -52,6 +54,23 @@ namespace EmploymentRegistry.Extensions
                     xmlOutputFormatter.SupportedMediaTypes.
                                             Add("application/vnd.kpaulv.hateoas+json");
                 }
+            });
+        }
+
+        public static void ConfigureVersioning(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;    // adds Api version header to Response
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+                // Conventions to assegn versions to different controllers
+                // instead of Attribute[ApiVersion]
+                options.Conventions.Controller<CompaniesController>()
+                                        .HasApiVersion(new ApiVersion(1, 0));
+                options.Conventions.Controller<CompaniesControllerV2>()
+                                        .HasDeprecatedApiVersion(new ApiVersion(2, 0));
             });
         }
 

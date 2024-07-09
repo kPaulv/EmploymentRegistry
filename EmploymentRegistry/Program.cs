@@ -65,8 +65,11 @@ builder.Services.AddControllers(config =>
   .AddCustomCsvFormatter()
   .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
-// Add custom JSON, XML media types (Content-Type's)
+// Add custom JSON, XML media types (Content-Type's) (PL)
 builder.Services.AddCustomMediaTypes();
+
+// Add API Versioning mechanism (PL)
+builder.Services.ConfigureVersioning();
 
 var app = builder.Build();
 
