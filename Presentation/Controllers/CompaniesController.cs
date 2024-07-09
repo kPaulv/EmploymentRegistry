@@ -14,7 +14,16 @@ namespace Presentation.Controllers
 
         public CompaniesController(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, POST, OPTIONS");
+
+            return Ok();
+        }
+
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await 

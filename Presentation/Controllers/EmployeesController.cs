@@ -18,7 +18,16 @@ namespace Presentation.Controllers
         public EmployeesController(IServiceManager serviceManager) => 
             _serviceManager = serviceManager;
 
+        [HttpOptions]
+        public IActionResult GetEmployeesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, POST, PUT, DELETE, OPTIONS");
+
+            return Ok();
+        }
+
         [HttpGet]
+        [HttpHead]
         [ServiceFilter(typeof(ValidationMediaTypeAttribute))]
         public async Task<IActionResult> GetEmployeesForCompany
             (Guid companyId, [FromQuery] EmployeeRequestParameters employeeRequestParams)
