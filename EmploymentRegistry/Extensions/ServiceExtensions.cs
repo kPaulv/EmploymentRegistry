@@ -1,6 +1,7 @@
 ﻿using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
 using LoggerService;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -77,11 +78,20 @@ namespace EmploymentRegistry.Extensions
 
         // Add Response Cache (PL)
         public static void ConfigureResponseCaching(this IServiceCollection serviceDescriptors) =>
-            serviceDescriptors.AddResponseCaching(options => { });
+            serviceDescriptors.AddResponseCaching(responseCachingOptions => { });
 
         // Add Response Cache Headers(for Validation & Expiration) (PL)
         public static void ConfigureResponseCacheHeaders(this IServiceCollection serviceDescriptors) =>
-            serviceDescriptors.AddHttpCacheHeaders(options => { });
+            serviceDescriptors.AddHttpCacheHeaders(
+                expirationModelOptions => 
+                {
+                    expirationModelOptions.MaxAge = 120;
+                    expirationModelOptions.CacheLocation = CacheLocation.Private;
+                }, 
+                validationModelOptions =>
+                {
+                    validationModelOptions.MustRevalidate = true;
+                });
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,

@@ -8,7 +8,6 @@ namespace Presentation.Controllers
 {
     [Route("api/companies")]
     [ApiController]
-    [ResponseCache(CacheProfileName = "ControllerConfigCacheProfile")]
     public class CompaniesController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
@@ -34,7 +33,6 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{id:guid}", Name = "CompanyById")]     // api/companies/id
-        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetCompany(Guid id)
         {
             var company = await 
