@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
@@ -79,6 +80,13 @@ builder.Services.ConfigureResponseCaching();
 // Add Response Cache HTTP Headers (Validation, Expiration) (PL)
 builder.Services.ConfigureResponseCacheHeaders();
 
+// Add Memory Cache for Rate Limiting Requests (Main + PL)
+builder.Services.AddMemoryCache();
+
+// Configure Rate Limiting (PL)
+builder.Services.ConfigureRateLimitingOptions();
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // configure Exception handler
@@ -96,6 +104,9 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
 });
+
+// Rate Limiting 
+app.UseIpRateLimiting();
 
 app.UseCors("CorsPolicy");
 
