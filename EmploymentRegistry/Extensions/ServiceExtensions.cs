@@ -1,4 +1,5 @@
-﻿using Contracts.Interfaces;
+﻿using AspNetCoreRateLimit;
+using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
 using LoggerService;
 using Marvin.Cache.Headers;
@@ -92,6 +93,37 @@ namespace EmploymentRegistry.Extensions
                 {
                     validationModelOptions.MustRevalidate = true;
                 });
+
+        // Add Rate Limiting (PL)
+        public static void ConfigureRateLimitingOptions(this IServiceCollection serviceDescriptors)
+        {
+            // List of Rate Limiting rules for specific endpoints
+            var rateLimitRules = new List<RateLimitRule>
+            {
+                new RateLimitRule
+                {
+                    Endpoint = "*",
+                    Limit = 5,
+                    Period = "5m"
+                }
+            };
+
+            // set up rules for Rate Limit
+            serviceDescriptors.Configure<IpRateLimitOptions>(rateLimitOptions =>
+            {
+                rateLimitOptions.GeneralRules = rateLimitRules;
+            });
+            // Store for Rate Limit counters
+            serviceDescriptors.AddSingleton<IRateLimitCounterStore, 
+                                                MemoryCacheRateLimitCounterStore>();
+            // Store for Ip Rate Limit policies
+            serviceDescriptors.AddSingleton<IIpPolicyStore, 
+                                                MemoryCacheIpPolicyStore>();
+            serviceDescriptors.AddSingleton<IRateLimitConfiguration, 
+                                                RateLimitConfiguration>();
+            serviceDescriptors.AddSingleton<IProcessingStrategy, 
+                                                AsyncKeyLockProcessingStrategy>();
+        }
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
