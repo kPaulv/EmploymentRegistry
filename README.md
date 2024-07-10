@@ -19,6 +19,7 @@
 + PL: Controllers in a separate project, injected in Program entry point into Services collection (Controllers as Services)
 + PL: API Versioning
 + PL: All HTTP Verbs: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
++ PL: Request Rate Limit (AspNetCoreRateLimit lib)
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 
 ### TODO:
