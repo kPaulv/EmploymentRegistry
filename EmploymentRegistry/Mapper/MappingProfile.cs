@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Entities;
 using Shared.DataTransferObjects;
+using Shared.DataTransferObjects.IdentityDTO;
 
 namespace EmploymentRegistry.Mapper
 {
@@ -23,6 +24,9 @@ namespace EmploymentRegistry.Mapper
             CreateMap<EmployeeUpdateDto, Employee>().ReverseMap();
 
             CreateMap<CompanyUpdateDto, Company>();
+
+            // Mapping rule for Identity User DTO
+            CreateMap<UserRegistrationDto, User>();
         }
     }
 }
