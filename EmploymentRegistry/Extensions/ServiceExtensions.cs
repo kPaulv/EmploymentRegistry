@@ -1,8 +1,10 @@
 ﻿using AspNetCoreRateLimit;
 using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
+using Entities.Entities;
 using LoggerService;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -123,6 +125,19 @@ namespace EmploymentRegistry.Extensions
                                                 RateLimitConfiguration>();
             serviceDescriptors.AddSingleton<IProcessingStrategy, 
                                                 AsyncKeyLockProcessingStrategy>();
+        }
+
+        // Configure Identity (DAL)
+        public static void ConfigureIdentity(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.AddIdentity<User, IdentityRole>(identityOptions =>
+            {
+                identityOptions.Password.RequiredLength = 8;
+                identityOptions.Password.RequireDigit = false;
+                identityOptions.Password.RequireUppercase = false;
+                identityOptions.Password.RequireNonAlphanumeric = false;
+                identityOptions.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
         }
 
         // Configure DbContext (DAL)
