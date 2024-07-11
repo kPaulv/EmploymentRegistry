@@ -5,6 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Service.Contracts;
 using Shared.DataTransferObjects.AuthDTO;
 using Entities.Entities;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace Service
 {
@@ -16,10 +20,12 @@ namespace Service
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthenticationService(IMapper mapper, 
-                                      IConfiguration configuration, 
-                                      ILoggerManager logger, 
-                                      UserManager<User> userManager, 
+        private User? _user;
+
+        public AuthenticationService(IMapper mapper,
+                                      IConfiguration configuration,
+                                      ILoggerManager logger,
+                                      UserManager<User> userManager,
                                       RoleManager<IdentityRole> roleManager)
         {
             _mapper = mapper;
@@ -37,7 +43,7 @@ namespace Service
 
             if (result.Succeeded)
             {
-                foreach(var role in userRegistrationDto.Roles)
+                foreach (var role in userRegistrationDto.Roles)
                 {
                     if (await _roleManager.RoleExistsAsync(role))
                         _userManager.AddToRoleAsync(user, role);
@@ -45,6 +51,81 @@ namespace Service
             }
 
             return result;
+        }
+
+        public async Task<bool> AuthenticateUser(UserAuthenticationDto userAuthenticationDto)
+        {
+            var user = await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
+
+            if (user is null)
+            {
+                _logger.Error("Authentication failed. Wrong User name.");
+                return false;
+            }
+
+            var result =
+                await _userManager.CheckPasswordAsync(user, userAuthenticationDto.Password);
+
+            if (!result)
+                _logger.Error("Authentication failed. Wrong password.");
+
+            return result;
+        }
+
+        public async Task<string> GenerateToken(UserAuthenticationDto userAuthenticationDto)
+        {
+            var signingCredentials = GetSigningCredentials();
+            var securityClaims = await GetSecurityClaims(userAuthenticationDto);
+            var tokenOptions = GenerateTokenOptions(signingCredentials, 
+                                                        securityClaims);
+
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        }
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            var key = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+            var secret = 
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+
+            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+        }
+
+        private async Task<List<Claim>> GetSecurityClaims(UserAuthenticationDto 
+                                                            userAuthenticationDto)
+        {
+            var user =
+                await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName)
+            };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach(var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            return claims;
+        }
+
+        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials,
+                                                            List<Claim> securityClaims)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+
+            var tokenOptions = new JwtSecurityToken(
+                    issuer: jwtSettings["ValidIssuer"],
+                    audience: jwtSettings["ValidAudience"],
+                    claims: securityClaims,
+                    expires: DateTime.Now.AddMinutes(
+                        Convert.ToDouble(jwtSettings["ExpirationTime"])
+                        ),
+                    signingCredentials: signingCredentials
+                );
+
+            return tokenOptions;
         }
     }
 }

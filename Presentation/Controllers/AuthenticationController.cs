@@ -32,5 +32,24 @@ namespace Presentation.Controllers
 
             return StatusCode(201);
         }
+
+        [HttpPost("login")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Authenticate([FromBody] UserAuthenticationDto 
+                                                                    userAuthenticationDto)
+        {
+            var authResult = 
+                await _serviceManager.AuthenticationService
+                                        .AuthenticateUser(userAuthenticationDto);
+            if (!authResult)
+                return Unauthorized();
+
+            var token = 
+                await _serviceManager.AuthenticationService
+                                        .GenerateToken(userAuthenticationDto);
+
+            return Ok(new { Token = token }); // returning JWT in response body
+        }
+
     }
 }
