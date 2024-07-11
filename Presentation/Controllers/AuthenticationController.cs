@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Service.Contracts;
-using Shared.DataTransferObjects.IdentityDTO;
+using Shared.DataTransferObjects.AuthDTO;
 
 namespace Presentation.Controllers
 {

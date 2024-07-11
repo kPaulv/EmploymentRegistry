@@ -3,7 +3,7 @@ using Contracts.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Service.Contracts;
-using Shared.DataTransferObjects.IdentityDTO;
+using Shared.DataTransferObjects.AuthDTO;
 using Entities.Entities;
 
 namespace Service

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.DataTransferObjects.IdentityDTO
+namespace Shared.DataTransferObjects.AuthDTO
 {
     public record UserRegistrationDto
     {

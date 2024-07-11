@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Entities.Entities;
 using Shared.DataTransferObjects;
-using Shared.DataTransferObjects.IdentityDTO;
+using Shared.DataTransferObjects.AuthDTO;
 
 namespace EmploymentRegistry.Mapper
 {

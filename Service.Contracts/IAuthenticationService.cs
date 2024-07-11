@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Shared.DataTransferObjects.IdentityDTO;
+using Shared.DataTransferObjects.AuthDTO;
 
 namespace Service.Contracts
 {
