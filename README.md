@@ -21,6 +21,7 @@
 + PL: All HTTP Verbs: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
 + PL: Request Rate Limit (AspNetCoreRateLimit lib)
 + Authentication using JWT
++ Refresh Token Mechanism
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 
 ### TODO:
