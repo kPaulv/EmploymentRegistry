@@ -44,13 +44,13 @@ namespace Presentation.Controllers
             if (!authResult)
                 return Unauthorized();
 
-            var token = 
+            var tokenDto = 
                 await _serviceManager.AuthenticationService
-                                        .GenerateToken();
+                                        .GenerateToken(populateExpirtionTime: true);
 
             // returning JWT in response body
-            return token != null ? 
-                        Ok(new { Token = token }) : 
+            return tokenDto != null ? 
+                        Ok(tokenDto) : 
                         StatusCode(500, new { Error = "Token generation error." }); 
         }
 

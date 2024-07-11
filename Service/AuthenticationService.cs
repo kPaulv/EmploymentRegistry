@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Cryptography;
+using Entities.Exceptions.BadRequest;
 
 namespace Service
 {
@@ -73,14 +75,28 @@ namespace Service
             return result;
         }
 
-        public async Task<string> GenerateToken()
+        public async Task<TokenDto> GenerateToken(bool populateExpirationTime)
         {
+            // tokenOptions needed to Write Access Token
             var signingCredentials = GetSigningCredentials();
             var securityClaims = await GetSecurityClaims();
             var tokenOptions = GenerateTokenOptions(signingCredentials, 
                                                         securityClaims);
 
-            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            //generating Refresh Token
+            var refreshToken = GenerateRefreshToken();
+            _user.RefreshToken = refreshToken;
+
+            // set Expiration time if needed(e.g. first time authenticating)
+            if (populateExpirationTime)
+                _user.RefreshTokenExpirationTime = DateTime.Now.AddDays(7);
+
+            // save changes to Db(Refresh Token & its Expiration Time)
+            await _userManager.UpdateAsync(_user);
+
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+            return new TokenDto(accessToken, refreshToken);
         }
 
         private SigningCredentials GetSigningCredentials()
@@ -132,6 +148,69 @@ namespace Service
                 );
 
             return tokenOptions;
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        public async Task<TokenDto> RefreshToken(TokenDto tokenDto)
+        {
+            var principal = GetPrincipalFromExpiredToken(tokenDto.AccessToken);
+
+            var user = await _userManager.FindByNameAsync(principal.Identity.Name);
+            // if user doesn't exist, refreshToken is fake or refresh token has expired
+            if (user == null || user.RefreshToken != tokenDto.RefreshToken ||
+                                    user.RefreshTokenExpirationTime <= DateTime.Now)
+                throw new RefreshTokenBadRequestException();
+
+            _user = user;
+
+            // we refresh access token before refresh token has expired
+            return await GenerateToken(populateExpirationTime: false); 
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+
+            var issuerSecret = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+            issuerSecret += new string(issuerSecret.ToCharArray().Reverse().ToArray());
+
+            // server token params to compare with incoming token
+            var tokenValidationParams = new TokenValidationParameters
+            {
+                ValidIssuer = jwtSettings["ValidIssuer"],
+                ValidAudience = jwtSettings["ValidAudience"],
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSecret))
+            };
+
+            // token handler to validate incoming token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParams, out securityToken);
+
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || 
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                                                    StringComparison.InvariantCulture))
+            {
+                throw new SecurityTokenException("Current token is invalid.");
+            }
+
+            return principal;
         }
     }
 }
