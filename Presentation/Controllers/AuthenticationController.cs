@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 using Service.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Shared.DataTransferObjects.IdentityDTO;
 
 namespace Presentation.Controllers
 {
@@ -17,5 +13,24 @@ namespace Presentation.Controllers
 
         public AuthenticationController(IServiceManager serviceManager) => 
             _serviceManager = serviceManager;
+
+        [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> RegisterUser([FromBody]UserRegistrationDto userRegistrationDto)
+        {
+            var result = 
+                await _serviceManager.AuthenticationService.RegisterUserAsync(userRegistrationDto);
+
+            if(!result.Succeeded)
+            {
+                foreach(var error in result.Errors)
+                {
+                    ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return BadRequest(ModelState);
+            }
+
+            return StatusCode(201);
+        }
     }
 }

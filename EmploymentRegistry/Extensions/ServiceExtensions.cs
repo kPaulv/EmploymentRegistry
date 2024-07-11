@@ -105,7 +105,7 @@ namespace EmploymentRegistry.Extensions
                 new RateLimitRule
                 {
                     Endpoint = "*",
-                    Limit = 5,
+                    Limit = 10,
                     Period = "5m"
                 }
             };
