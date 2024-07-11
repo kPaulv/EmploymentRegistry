@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -11,9 +12,10 @@ using Repository;
 namespace EmploymentRegistry.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20240711171727_AddRefreshTokenColumnsToUserTable")]
+    partial class AddRefreshTokenColumnsToUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,22 +229,22 @@ namespace EmploymentRegistry.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5f1d4b8d-2645-4705-86cb-3fd62145a0a1",
-                            ConcurrencyStamp = "d6896d9e-e598-459d-8f2f-433ab29e706f",
+                            Id = "93407cfb-d159-4477-b16d-308ca8886bf8",
+                            ConcurrencyStamp = "317b8ff4-a9ad-420d-89a7-f508044e4c31",
                             Name = "Guest",
                             NormalizedName = "GUEST"
                         },
                         new
                         {
-                            Id = "92637821-59d1-4482-9200-f111f6bd535a",
-                            ConcurrencyStamp = "bd03cea5-7f62-4383-bc5a-dff7e9a9d32c",
+                            Id = "ee495c51-a3a0-42f2-b159-f5a59f17a029",
+                            ConcurrencyStamp = "5f8be20a-94a6-4a85-bd35-8d938c0d89da",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "047102ce-92d1-42ff-ade5-12b00c259b8c",
-                            ConcurrencyStamp = "77b64b46-6219-48db-a448-aee7144528a6",
+                            Id = "b6669959-4969-4292-8e04-b41313755896",
+                            ConcurrencyStamp = "e2866b3a-7369-4dfb-864f-e0f4958220c5",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
