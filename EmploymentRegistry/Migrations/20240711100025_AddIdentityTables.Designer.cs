@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -11,9 +12,10 @@ using Repository;
 namespace EmploymentRegistry.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20240711100025_AddIdentityTables")]
+    partial class AddIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,29 +219,6 @@ namespace EmploymentRegistry.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "5f1d4b8d-2645-4705-86cb-3fd62145a0a1",
-                            ConcurrencyStamp = "d6896d9e-e598-459d-8f2f-433ab29e706f",
-                            Name = "Guest",
-                            NormalizedName = "GUEST"
-                        },
-                        new
-                        {
-                            Id = "92637821-59d1-4482-9200-f111f6bd535a",
-                            ConcurrencyStamp = "bd03cea5-7f62-4383-bc5a-dff7e9a9d32c",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "047102ce-92d1-42ff-ade5-12b00c259b8c",
-                            ConcurrencyStamp = "77b64b46-6219-48db-a448-aee7144528a6",
-                            Name = "SuperAdmin",
-                            NormalizedName = "SUPERADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -87,6 +87,11 @@ builder.Services.AddMemoryCache();
 builder.Services.ConfigureRateLimitingOptions();
 builder.Services.AddHttpContextAccessor();
 
+// Add Authentication
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureJWT(builder.Configuration);
+
 var app = builder.Build();
 
 // configure Exception handler
@@ -114,6 +119,8 @@ app.UseCors("CorsPolicy");
 app.UseResponseCaching();
 
 app.UseHttpCacheHeaders();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -1,16 +1,21 @@
 ﻿using AspNetCoreRateLimit;
 using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
+using Entities.Entities;
 using LoggerService;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Presentation.Controllers;
 using Repository;
 using Service;
 using Service.Contracts;
+using System.Text;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -103,7 +108,7 @@ namespace EmploymentRegistry.Extensions
                 new RateLimitRule
                 {
                     Endpoint = "*",
-                    Limit = 5,
+                    Limit = 10,
                     Period = "5m"
                 }
             };
@@ -123,6 +128,50 @@ namespace EmploymentRegistry.Extensions
                                                 RateLimitConfiguration>();
             serviceDescriptors.AddSingleton<IProcessingStrategy, 
                                                 AsyncKeyLockProcessingStrategy>();
+        }
+
+        // Configure Identity (DAL)
+        public static void ConfigureIdentity(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.AddIdentity<User, IdentityRole>(identityOptions =>
+            {
+                identityOptions.Password.RequiredLength = 8;
+                identityOptions.Password.RequireDigit = false;
+                identityOptions.Password.RequireUppercase = false;
+                identityOptions.Password.RequireNonAlphanumeric = false;
+                identityOptions.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
+        }
+
+        // Configure JWT
+        public static void ConfigureJWT(this IServiceCollection serviceDescriptors,
+                                            IConfiguration configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+
+            secretKey += new string(secretKey.ToCharArray().Reverse().ToArray());
+
+            serviceDescriptors.AddAuthentication(authOptions =>
+            {
+                authOptions.DefaultAuthenticateScheme =
+                                JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme =
+                                JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
+            {
+                bearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["ValidIssuer"],
+                    ValidAudience = jwtSettings["ValidAudience"],
+                    IssuerSigningKey = 
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
         }
 
         // Configure DbContext (DAL)
