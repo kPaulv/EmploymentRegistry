@@ -20,6 +20,7 @@
 + PL: API Versioning
 + PL: All HTTP Verbs: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
 + PL: Request Rate Limit (AspNetCoreRateLimit lib)
++ Authentication using JWT
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 
 ### TODO:
@@ -27,4 +28,5 @@
 + HATEOAS for all Entities
 + Rewrite Entity and Link models
 + SETUP CACHE SERVER FOR CACHE VALIDATION(Apache Traffic Server or Varnish or Squid or other)
++ Implement JWE
 
