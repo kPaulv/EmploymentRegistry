@@ -150,6 +150,8 @@ namespace EmploymentRegistry.Extensions
             var jwtSettings = configuration.GetSection("JwtSettings");
             var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
 
+            secretKey += new string(secretKey.ToCharArray().Reverse().ToArray());
+
             serviceDescriptors.AddAuthentication(authOptions =>
             {
                 authOptions.DefaultAuthenticateScheme =

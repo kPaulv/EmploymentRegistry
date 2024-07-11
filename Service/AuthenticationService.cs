@@ -74,7 +74,7 @@ namespace Service
 
         public async Task<string> GenerateToken(UserAuthenticationDto userAuthenticationDto)
         {
-            var signingCredentials = GetSigningCredentials();
+            var signingCredentials = GetSigningCredentials(userAuthenticationDto);
             var securityClaims = await GetSecurityClaims(userAuthenticationDto);
             var tokenOptions = GenerateTokenOptions(signingCredentials, 
                                                         securityClaims);
@@ -82,11 +82,19 @@ namespace Service
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
-        private SigningCredentials GetSigningCredentials()
+        private SigningCredentials GetSigningCredentials(UserAuthenticationDto userAuthenticationDto)
         {
             var key = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+            // if system variable is not defined, return exception
+            if (key is null)
+            {
+                _logger.Error("The authentication Secret is not defined on server!");
+            }
+
+            var reverseKey = new string(key.ToCharArray().Reverse().ToArray());
+
             var secret = 
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key + reverseKey));
 
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }

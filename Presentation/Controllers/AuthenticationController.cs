@@ -48,7 +48,10 @@ namespace Presentation.Controllers
                 await _serviceManager.AuthenticationService
                                         .GenerateToken(userAuthenticationDto);
 
-            return Ok(new { Token = token }); // returning JWT in response body
+            // returning JWT in response body
+            return token != null ? 
+                        Ok(new { Token = token }) : 
+                        StatusCode(500, new { Error = "Token generation error." }); 
         }
 
     }
