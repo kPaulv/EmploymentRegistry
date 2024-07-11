@@ -46,7 +46,7 @@ namespace Presentation.Controllers
 
             var token = 
                 await _serviceManager.AuthenticationService
-                                        .GenerateToken(userAuthenticationDto);
+                                        .GenerateToken();
 
             // returning JWT in response body
             return token != null ? 
