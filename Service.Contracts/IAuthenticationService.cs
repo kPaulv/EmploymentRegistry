@@ -7,6 +7,6 @@ namespace Service.Contracts
     {
         Task<IdentityResult> RegisterUserAsync(UserRegistrationDto userRegistrationDto);
         Task<bool> AuthenticateUser(UserAuthenticationDto userAuthenticationDto);
-        Task<string> GenerateToken(UserAuthenticationDto userAuthenticationDto);
+        Task<string> GenerateToken();
     }
 }

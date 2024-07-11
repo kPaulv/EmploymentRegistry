@@ -55,16 +55,17 @@ namespace Service
 
         public async Task<bool> AuthenticateUser(UserAuthenticationDto userAuthenticationDto)
         {
-            var user = await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
+            //var user = await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
+            _user = await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
 
-            if (user is null)
+            if (_user is null)
             {
                 _logger.Error("Authentication failed. Wrong User name.");
                 return false;
             }
 
             var result =
-                await _userManager.CheckPasswordAsync(user, userAuthenticationDto.Password);
+                await _userManager.CheckPasswordAsync(_user, userAuthenticationDto.Password);
 
             if (!result)
                 _logger.Error("Authentication failed. Wrong password.");
@@ -72,17 +73,17 @@ namespace Service
             return result;
         }
 
-        public async Task<string> GenerateToken(UserAuthenticationDto userAuthenticationDto)
+        public async Task<string> GenerateToken()
         {
-            var signingCredentials = GetSigningCredentials(userAuthenticationDto);
-            var securityClaims = await GetSecurityClaims(userAuthenticationDto);
+            var signingCredentials = GetSigningCredentials();
+            var securityClaims = await GetSecurityClaims();
             var tokenOptions = GenerateTokenOptions(signingCredentials, 
                                                         securityClaims);
 
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
-        private SigningCredentials GetSigningCredentials(UserAuthenticationDto userAuthenticationDto)
+        private SigningCredentials GetSigningCredentials()
         {
             var key = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
             // if system variable is not defined, return exception
@@ -99,17 +100,14 @@ namespace Service
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private async Task<List<Claim>> GetSecurityClaims(UserAuthenticationDto 
-                                                            userAuthenticationDto)
+        private async Task<List<Claim>> GetSecurityClaims()
         {
-            var user =
-                await _userManager.FindByNameAsync(userAuthenticationDto.UserName);
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, _user.UserName)
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(_user);
             foreach(var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
