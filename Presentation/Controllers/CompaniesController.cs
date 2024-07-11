@@ -1,4 +1,5 @@
 ﻿using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
 using Presentation.ModelBinders;
@@ -25,6 +26,7 @@ namespace Presentation.Controllers
 
         [HttpGet]
         [HttpHead]
+        [Authorize]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await 

@@ -4,15 +4,18 @@ using EmploymentRegistry.Formatter;
 using Entities.Entities;
 using LoggerService;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Presentation.Controllers;
 using Repository;
 using Service;
 using Service.Contracts;
+using System.Text;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -138,6 +141,35 @@ namespace EmploymentRegistry.Extensions
                 identityOptions.Password.RequireNonAlphanumeric = false;
                 identityOptions.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
+        }
+
+        // Configure JWT
+        public static void ConfigureJWT(this IServiceCollection serviceDescriptors,
+                                            IConfiguration configuration)
+        {
+            var jwtSettings = configuration.GetSection("JwtSettings");
+            var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+
+            serviceDescriptors.AddAuthentication(authOptions =>
+            {
+                authOptions.DefaultAuthenticateScheme =
+                                JwtBearerDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme =
+                                JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(bearerOptions =>
+            {
+                bearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings["ValidIssuer"],
+                    ValidAudience = jwtSettings["ValidAudience"],
+                    IssuerSigningKey = 
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
         }
 
         // Configure DbContext (DAL)
