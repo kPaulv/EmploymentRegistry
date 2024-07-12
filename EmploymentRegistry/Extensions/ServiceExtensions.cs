@@ -176,6 +176,10 @@ namespace EmploymentRegistry.Extensions
             });
         }
 
+        public static void AddJwtConfiguration(this IServiceCollection serviceDescriptors,
+                                                                IConfiguration configuration) => 
+            serviceDescriptors.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
+
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
                                                         IConfiguration configuration) =>

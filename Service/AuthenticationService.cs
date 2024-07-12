@@ -12,13 +12,14 @@ using System.Text;
 using System.Security.Cryptography;
 using Entities.Exceptions.BadRequest;
 using Entities.ConfigModels;
+using Microsoft.Extensions.Options;
 
 namespace Service
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+        private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -28,7 +29,7 @@ namespace Service
         private User? _user;
 
         public AuthenticationService(IMapper mapper,
-                                      IConfiguration configuration,
+                                      IOptionsSnapshot<JwtConfiguration> configuration,
                                       ILoggerManager logger,
                                       UserManager<User> userManager,
                                       RoleManager<IdentityRole> roleManager)
@@ -39,8 +40,7 @@ namespace Service
             _userManager = userManager;
             _roleManager = roleManager;
 
-            _jwtConfiguration = new JwtConfiguration();
-            _configuration.Bind(_jwtConfiguration.SectionName, _jwtConfiguration);
+            _jwtConfiguration = _configuration.Value;
         }
 
         public async Task<IdentityResult> RegisterUserAsync(UserRegistrationDto userRegistrationDto)

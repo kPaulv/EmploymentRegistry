@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Contracts.Interfaces;
+using Entities.ConfigModels;
 using Entities.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Service.Contracts;
-using Shared.DataTransferObjects;
 
 namespace Service
 {
@@ -18,7 +18,7 @@ namespace Service
                                 ILoggerManager logger, 
                                 IMapper mapper, 
                                 IEmployeeLinks employeeLinks,
-                                IConfiguration configuration, // for Authentication service
+                                IOptionsSnapshot<JwtConfiguration> configuration, // for Authentication service
                                 UserManager<User> userManager, // for Authentication service
                                 RoleManager<IdentityRole> roleManager) // for Authentication service
         {
