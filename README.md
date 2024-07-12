@@ -23,6 +23,7 @@
 + Authentication using JWT
 + Refresh Token Mechanism
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
++ PATTERNS & ARCHITECTURE: OPTIONS pattern for binding configuration into strongly typed Model class
 
 ### TODO:
 + Sorting, Filtering, Key-Search and Data Shaping for all Entities
