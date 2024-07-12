@@ -91,6 +91,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
+// Add custom JwtConfiguration (Configuration service only for JWT section)
+builder.Services.AddJwtConfiguration(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿using AspNetCoreRateLimit;
 using Contracts.Interfaces;
 using EmploymentRegistry.Formatter;
+using Entities.ConfigModels;
 using Entities.Entities;
 using LoggerService;
 using Marvin.Cache.Headers;
@@ -147,9 +148,10 @@ namespace EmploymentRegistry.Extensions
         public static void ConfigureJWT(this IServiceCollection serviceDescriptors,
                                             IConfiguration configuration)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
+            var jwtConfig = new JwtConfiguration();
+            configuration.Bind(jwtConfig);
 
+            var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
             secretKey += new string(secretKey.ToCharArray().Reverse().ToArray());
 
             serviceDescriptors.AddAuthentication(authOptions =>
@@ -166,13 +168,17 @@ namespace EmploymentRegistry.Extensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["ValidIssuer"],
-                    ValidAudience = jwtSettings["ValidAudience"],
+                    ValidIssuer = jwtConfig.ValidIssuer,
+                    ValidAudience = jwtConfig.ValidAudience,
                     IssuerSigningKey = 
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
             });
         }
+
+        public static void AddJwtConfiguration(this IServiceCollection serviceDescriptors,
+                                                                IConfiguration configuration) => 
+            serviceDescriptors.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,

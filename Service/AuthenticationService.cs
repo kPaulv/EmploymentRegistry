@@ -11,21 +11,25 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Cryptography;
 using Entities.Exceptions.BadRequest;
+using Entities.ConfigModels;
+using Microsoft.Extensions.Options;
 
 namespace Service
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+        private readonly IOptionsSnapshot<JwtConfiguration> _configuration;
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly JwtConfiguration _jwtConfiguration;
+
         private User? _user;
 
         public AuthenticationService(IMapper mapper,
-                                      IConfiguration configuration,
+                                      IOptionsSnapshot<JwtConfiguration> configuration,
                                       ILoggerManager logger,
                                       UserManager<User> userManager,
                                       RoleManager<IdentityRole> roleManager)
@@ -35,6 +39,8 @@ namespace Service
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
+
+            _jwtConfiguration = _configuration.Value;
         }
 
         public async Task<IdentityResult> RegisterUserAsync(UserRegistrationDto userRegistrationDto)
@@ -135,14 +141,12 @@ namespace Service
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials,
                                                             List<Claim> securityClaims)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-
             var tokenOptions = new JwtSecurityToken(
-                    issuer: jwtSettings["ValidIssuer"],
-                    audience: jwtSettings["ValidAudience"],
+                    issuer: _jwtConfiguration.ValidIssuer,
+                    audience: _jwtConfiguration.ValidAudience,
                     claims: securityClaims,
                     expires: DateTime.Now.AddMinutes(
-                        Convert.ToDouble(jwtSettings["ExpirationTime"])
+                        Convert.ToDouble(_jwtConfiguration.ExpirationTime)
                         ),
                     signingCredentials: signingCredentials
                 );
@@ -179,16 +183,14 @@ namespace Service
 
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-
             var issuerSecret = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
             issuerSecret += new string(issuerSecret.ToCharArray().Reverse().ToArray());
 
             // server token params to compare with incoming token
             var tokenValidationParams = new TokenValidationParameters
             {
-                ValidIssuer = jwtSettings["ValidIssuer"],
-                ValidAudience = jwtSettings["ValidAudience"],
+                ValidIssuer = _jwtConfiguration.ValidIssuer,
+                ValidAudience = _jwtConfiguration.ValidAudience,
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateIssuerSigningKey = true,
