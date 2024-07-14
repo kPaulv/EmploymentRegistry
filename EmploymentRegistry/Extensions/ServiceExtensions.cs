@@ -150,7 +150,7 @@ namespace EmploymentRegistry.Extensions
                                             IConfiguration configuration)
         {
             var jwtConfig = new JwtConfiguration();
-            configuration.Bind(jwtConfig);
+            configuration.GetSection("JwtSettings").Bind(jwtConfig);
 
             var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
             secretKey += new string(secretKey.ToCharArray().Reverse().ToArray());
