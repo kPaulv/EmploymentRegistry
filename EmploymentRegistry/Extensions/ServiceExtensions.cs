@@ -208,6 +208,11 @@ namespace EmploymentRegistry.Extensions
                 swaggerGenOptions.SwaggerDoc("v2", 
                     new OpenApiInfo { Title = "Employment Registry Web API", Version = "v2" });
 
+                //For XML documentation
+                var xmlFile = $"{typeof(Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                swaggerGenOptions.IncludeXmlComments(xmlPath);
+
                 // For authorization 
                 swaggerGenOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
