@@ -24,6 +24,7 @@
 + Refresh Token Mechanism
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 + PATTERNS & ARCHITECTURE: OPTIONS pattern for binding configuration into strongly typed Model class
++ DOCS: Swagger OpenAPI documentation 
 
 ### TODO:
 + Sorting, Filtering, Key-Search and Data Shaping for all Entities
@@ -31,4 +32,5 @@
 + Rewrite Entity and Link models
 + SETUP CACHE SERVER FOR CACHE VALIDATION(Apache Traffic Server or Varnish or Squid or other)
 + Implement JWE
++ All OpenAPI Endpoints description for Swagger
 
