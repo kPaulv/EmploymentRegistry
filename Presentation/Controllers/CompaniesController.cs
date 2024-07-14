@@ -10,6 +10,7 @@ namespace Presentation.Controllers
 {
     [Route("api/companies")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class CompaniesController : ControllerBase
     {
         private readonly IServiceManager _serviceManager;
@@ -68,6 +69,7 @@ namespace Presentation.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [Route("CreateCompanyCollection")]
         public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyCreateDto> 
             companyInputDtos)
         {

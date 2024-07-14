@@ -17,6 +17,7 @@ using Repository;
 using Service;
 using Service.Contracts;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -176,9 +177,22 @@ namespace EmploymentRegistry.Extensions
             });
         }
 
+        // JwtConfiguration service for Options Pattern
         public static void AddJwtConfiguration(this IServiceCollection serviceDescriptors,
                                                                 IConfiguration configuration) => 
             serviceDescriptors.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
+
+        // Configure Swagger (Main)
+        public static void ConfigureSwagger(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.AddSwaggerGen(swaggerGenOptions =>
+            {
+                swaggerGenOptions.SwaggerDoc("v1", 
+                    new OpenApiInfo { Title = "Employment Registry Web API", Version = "v1" });
+                swaggerGenOptions.SwaggerDoc("v2", 
+                    new OpenApiInfo { Title = "Employment Registry Web API", Version = "v2" });
+            });
+        }
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,

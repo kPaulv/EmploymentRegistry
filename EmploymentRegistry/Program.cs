@@ -93,6 +93,8 @@ builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
 // Add custom JwtConfiguration (Configuration service only for JWT section)
 builder.Services.AddJwtConfiguration(builder.Configuration);
+// Add Swagger generator for OpenAPI
+builder.Services.ConfigureSwagger();
 
 var app = builder.Build();
 
@@ -110,6 +112,14 @@ app.UseStaticFiles();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
+});
+
+// Swagger OpenAPI
+app.UseSwagger();
+app.UseSwaggerUI(s =>
+{
+    s.SwaggerEndpoint("/swagger/v1/swagger.json", "Employment Registry V1");
+    s.SwaggerEndpoint("/swagger/v2/swagger.json", "Employment Registry V2");
 });
 
 // Rate Limiting 
