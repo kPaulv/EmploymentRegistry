@@ -188,7 +188,23 @@ namespace EmploymentRegistry.Extensions
             serviceDescriptors.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc("v1", 
-                    new OpenApiInfo { Title = "Employment Registry Web API", Version = "v1" });
+                    new OpenApiInfo { 
+                        Title = "Employment Registry Web API", 
+                        Version = "v1",
+                        Description = "Employment Registry App backend server API",
+                        TermsOfService = new Uri("https://fakesite.com/terms"),
+                        Contact = new OpenApiContact()
+                        {
+                            Name = "Paul",
+                            Email = "kPaulv@mail.com",
+                            Url = new Uri("https://github.com/kPaulv")
+                        },
+                        License = new OpenApiLicense()
+                        {
+                            Name = "kPaulv License",
+                            Url = new Uri("https://fakesite.com/license")
+                        }
+                    });
                 swaggerGenOptions.SwaggerDoc("v2", 
                     new OpenApiInfo { Title = "Employment Registry Web API", Version = "v2" });
 
