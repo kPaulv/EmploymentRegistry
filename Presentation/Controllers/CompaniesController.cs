@@ -25,6 +25,10 @@ namespace Presentation.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Gets all Companies existing in DB
+        /// </summary>
+        /// <returns>List of Companies</returns>
         [HttpGet]
         [HttpHead]
         [Authorize]
@@ -36,6 +40,11 @@ namespace Presentation.Controllers
             return Ok(companies);
         }
 
+        /// <summary>
+        /// Returns a certain Company with provided Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>a Company instance</returns>
         [HttpGet("{id:guid}", Name = "CompanyById")]     // api/companies/id
         [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 90)]
         [HttpCacheValidation(MustRevalidate = false)]
@@ -47,6 +56,11 @@ namespace Presentation.Controllers
             return Ok(company);
         }
 
+        /// <summary>
+        /// Returns a collection of company with provided Ids
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
         [HttpGet("collection/({ids})", Name = "CompanyCollection")]
         public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = 
             typeof(ArrayModelBinder))]IEnumerable<Guid> ids) 
@@ -57,8 +71,19 @@ namespace Presentation.Controllers
             return Ok(companies);
         }
 
+        /// <summary>
+        /// Creates a new Company and puts it into DB
+        /// </summary>
+        /// <param name="companyInputDto"></param>
+        /// <returns>Newly created Company instance</returns>
+        /// <response code="201">Returns the newly created Company</response>
+        /// <response code="400">If the item is null</response>
+        /// <response code="201">If the model is invalid</response>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(422)]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyCreateDto companyInputDto)
         {
             var company = await 
