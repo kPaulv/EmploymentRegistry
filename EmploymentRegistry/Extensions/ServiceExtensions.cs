@@ -191,6 +191,32 @@ namespace EmploymentRegistry.Extensions
                     new OpenApiInfo { Title = "Employment Registry Web API", Version = "v1" });
                 swaggerGenOptions.SwaggerDoc("v2", 
                     new OpenApiInfo { Title = "Employment Registry Web API", Version = "v2" });
+
+                // For authorization 
+                swaggerGenOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Add JWT and Bearer here",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer"
+                        },
+                        new List<string>()
+                    }
+                });
             });
         }
 
