@@ -17,6 +17,7 @@ using Repository;
 using Service;
 using Service.Contracts;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace EmploymentRegistry.Extensions
 {
@@ -149,7 +150,7 @@ namespace EmploymentRegistry.Extensions
                                             IConfiguration configuration)
         {
             var jwtConfig = new JwtConfiguration();
-            configuration.Bind(jwtConfig);
+            configuration.GetSection("JwtSettings").Bind(jwtConfig);
 
             var secretKey = Environment.GetEnvironmentVariable("EMPREGAPP_SECRET");
             secretKey += new string(secretKey.ToCharArray().Reverse().ToArray());
@@ -176,9 +177,69 @@ namespace EmploymentRegistry.Extensions
             });
         }
 
+        // JwtConfiguration service for Options Pattern
         public static void AddJwtConfiguration(this IServiceCollection serviceDescriptors,
                                                                 IConfiguration configuration) => 
             serviceDescriptors.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
+
+        // Configure Swagger (Main)
+        public static void ConfigureSwagger(this IServiceCollection serviceDescriptors)
+        {
+            serviceDescriptors.AddSwaggerGen(swaggerGenOptions =>
+            {
+                swaggerGenOptions.SwaggerDoc("v1", 
+                    new OpenApiInfo { 
+                        Title = "Employment Registry Web API", 
+                        Version = "v1",
+                        Description = "Employment Registry App backend server API",
+                        TermsOfService = new Uri("https://fakesite.com/terms"),
+                        Contact = new OpenApiContact()
+                        {
+                            Name = "Paul",
+                            Email = "kPaulv@mail.com",
+                            Url = new Uri("https://github.com/kPaulv")
+                        },
+                        License = new OpenApiLicense()
+                        {
+                            Name = "kPaulv License",
+                            Url = new Uri("https://fakesite.com/license")
+                        }
+                    });
+                swaggerGenOptions.SwaggerDoc("v2", 
+                    new OpenApiInfo { Title = "Employment Registry Web API", Version = "v2" });
+
+                //For XML documentation
+                var xmlFile = $"{typeof(Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                swaggerGenOptions.IncludeXmlComments(xmlPath);
+
+                // For authorization 
+                swaggerGenOptions.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Add JWT and Bearer here",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer"
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+        }
 
         // Configure DbContext (DAL)
         public static void ConfigureRepositoryContext(this IServiceCollection serviceDescriptors,
