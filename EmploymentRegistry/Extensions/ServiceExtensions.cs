@@ -52,6 +52,8 @@ namespace EmploymentRegistry.Extensions
                 {
                     jsonOutputFormatter.SupportedMediaTypes.
                                             Add("application/vnd.kpaulv.hateoas+json");
+                    jsonOutputFormatter.SupportedMediaTypes.
+                                            Add("application/vnd.kpaulv.apiroot+json");
                 }
 
                 var xmlOutputFormatter = config.OutputFormatters
@@ -61,7 +63,9 @@ namespace EmploymentRegistry.Extensions
                 if(xmlOutputFormatter != null)
                 {
                     xmlOutputFormatter.SupportedMediaTypes.
-                                            Add("application/vnd.kpaulv.hateoas+json");
+                                            Add("application/vnd.kpaulv.hateoas+xml");
+                    xmlOutputFormatter.SupportedMediaTypes.
+                                            Add("application/vnd.kpaulv.apiroot+xml");
                 }
             });
         }
