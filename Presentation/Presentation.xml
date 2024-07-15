@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Presentation</name>
+    </assembly>
+    <members>
+        <member name="M:Presentation.Controllers.CompaniesController.GetCompanies">
+            <summary>
+            Gets all Companies existing in DB
+            </summary>
+            <returns>List of Companies</returns>
+        </member>
+        <member name="M:Presentation.Controllers.CompaniesController.GetCompany(System.Guid)">
+            <summary>
+            Returns a certain Company with provided Id
+            </summary>
+            <param name="id"></param>
+            <returns>a Company instance</returns>
+        </member>
+        <member name="M:Presentation.Controllers.CompaniesController.GetCompanyCollection(System.Collections.Generic.IEnumerable{System.Guid})">
+            <summary>
+            Returns a collection of company with provided Ids
+            </summary>
+            <param name="ids"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Presentation.Controllers.CompaniesController.CreateCompany(Shared.DataTransferObjects.CompanyCreateDto)">
+            <summary>
+            Creates a new Company and puts it into DB
+            </summary>
+            <param name="companyInputDto"></param>
+            <returns>Newly created Company instance</returns>
+            <response code="201">Returns the newly created Company</response>
+            <response code="400">If the item is null</response>
+            <response code="201">If the model is invalid</response>
+        </member>
+    </members>
+</doc>
