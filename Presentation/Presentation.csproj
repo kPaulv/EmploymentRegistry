@@ -30,7 +30,8 @@
 
 	<ItemGroup>
 	  <None Update="Presentation.xml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 	  </None>
 	</ItemGroup>
 
