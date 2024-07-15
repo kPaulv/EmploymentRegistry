@@ -32,15 +32,27 @@ namespace Presentation.Controllers
                     },
                     new Link()
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext, "CompanyById", new { }),
-                        Rel = "company",
+                        Href = _linkGenerator.GetUriByName(HttpContext, "GetCompany", new { }),
+                        Rel = "companies/{id:guid}",
                         Method = "GET"
                     },
                     new Link()
                     {
-                        Href = _linkGenerator.GetUriByName(HttpContext, "CompanyCollection", new { }),
+                        Href = _linkGenerator.GetUriByName(HttpContext, "GetCompanyCollection", new { }),
+                        Rel = "collection/({ids})",
+                        Method = "GET"
+                    },
+                    new Link()
+                    {
+                        Href = _linkGenerator.GetUriByName(HttpContext, "GetCompanies", new { }),
                         Rel = "companies",
                         Method = "GET"
+                    },
+                    new Link()
+                    {
+                        Href = _linkGenerator.GetUriByName(HttpContext, "CreateCompany", new { }),
+                        Rel = "create_company",
+                        Method = "POST"
                     }
                 };
                 return Ok(apiLinksList);
