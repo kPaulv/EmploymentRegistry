@@ -29,7 +29,7 @@ namespace Presentation.Controllers
         /// Gets all Companies existing in DB
         /// </summary>
         /// <returns>List of Companies</returns>
-        [HttpGet]
+        [HttpGet(Name = "GetCompanies")]
         [HttpHead]
         [Authorize]
         public async Task<IActionResult> GetCompanies()
@@ -45,7 +45,7 @@ namespace Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns>a Company instance</returns>
-        [HttpGet("{id:guid}", Name = "CompanyById")]     // api/companies/id
+        [HttpGet("{id:guid}", Name = "GetCompany")]     // api/companies/id
         [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 90)]
         [HttpCacheValidation(MustRevalidate = false)]
         public async Task<IActionResult> GetCompany(Guid id)
@@ -61,7 +61,7 @@ namespace Presentation.Controllers
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        [HttpGet("collection/({ids})", Name = "CompanyCollection")]
+        [HttpGet("collection/({ids})", Name = "GetCompanyCollection")]
         public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = 
             typeof(ArrayModelBinder))]IEnumerable<Guid> ids) 
         {
@@ -79,7 +79,7 @@ namespace Presentation.Controllers
         /// <response code="201">Returns the newly created Company</response>
         /// <response code="400">If the item is null</response>
         /// <response code="201">If the model is invalid</response>
-        [HttpPost]
+        [HttpPost(Name = "CreateCompany")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
