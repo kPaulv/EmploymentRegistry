@@ -24,6 +24,7 @@
 + Refresh Token Mechanism
 + PATTERNS & ARCHITECTURE: HATEOAS for GET Employees Api
 + PATTERNS & ARCHITECTURE: OPTIONS pattern for binding configuration into strongly typed Model class
++ PATTERNS & ARCHITECTURE: Response API Flow
 + DOCS: Swagger OpenAPI documentation 
 
 ### TODO:
