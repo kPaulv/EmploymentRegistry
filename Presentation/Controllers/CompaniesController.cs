@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
+using Presentation.Controllers.Base;
+using Presentation.Extensions;
 using Presentation.ModelBinders;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -11,7 +13,7 @@ namespace Presentation.Controllers
     [Route("api/companies")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class CompaniesController : ControllerBase
+    public class CompaniesController : BaseController
     {
         private readonly IServiceManager _serviceManager;
 
@@ -34,8 +36,10 @@ namespace Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> GetCompanies()
         {
-            var companies = await 
+            var companiesResponse = await 
                 _serviceManager.CompanyService.GetAllCompaniesAsync(trackChanges: false);
+
+            var companies = companiesResponse.GetResult<IEnumerable<CompanyOutputDto>>();
 
             return Ok(companies);
         }
@@ -50,8 +54,13 @@ namespace Presentation.Controllers
         [HttpCacheValidation(MustRevalidate = false)]
         public async Task<IActionResult> GetCompany(Guid id)
         {
-            var company = await 
+            var companyResponse = await 
                 _serviceManager.CompanyService.GetCompanyAsync(id, trackChanges: false);
+
+            if(!companyResponse.Success)
+                return ProcessError(companyResponse);
+
+            var company = companyResponse.GetResult<CompanyOutputDto>();
 
             return Ok(company);
         }

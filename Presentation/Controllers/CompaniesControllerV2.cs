@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Presentation.ActionFilters;
+using Presentation.Controllers.Base;
+using Presentation.Extensions;
 using Presentation.ModelBinders;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -19,8 +21,10 @@ namespace Presentation.Controllers
         [HttpHead]
         public async Task<IActionResult> GetCompanies()
         {
-            var companies = await
+            var companiesResponse = await
                 _serviceManager.CompanyService.GetAllCompaniesAsync(trackChanges: false);
+
+            var companies = companiesResponse.GetResult<IEnumerable<CompanyOutputDto>>();
 
             var companies_v2 = companies.Select(comp => 
                 new CompanyOutputDto() { 

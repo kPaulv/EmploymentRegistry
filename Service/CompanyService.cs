@@ -8,6 +8,8 @@ using Entities.Exceptions.BadRequest;
 using Entities.Exceptions.NotFound;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using Entities.Responses.Base;
+using Entities.Responses;
 
 namespace Service
 {
@@ -35,21 +37,25 @@ namespace Service
             return company;
         }
 
-        public async Task<IEnumerable<CompanyOutputDto>> GetAllCompaniesAsync(bool trackChanges)
+        public async Task<BaseResponse> GetAllCompaniesAsync(bool trackChanges)
         {
             var companies = await _repository.CompanyStorage.GetAllCompaniesAsync(trackChanges);
 
             var companiesDto = _mapper.Map<IEnumerable<CompanyOutputDto>>(companies);
 
-            return companiesDto;
+            return new OkResponse<IEnumerable<CompanyOutputDto>>(companiesDto);
         }
 
-        public async Task<CompanyOutputDto> GetCompanyAsync(Guid id, bool trackChanges)
+        public async Task<BaseResponse> GetCompanyAsync(Guid id, bool trackChanges)
         {
             var company = await GetCompanyIfExistsAsync(id, trackChanges);
 
+            if (company is null)
+                return new CompanyNotFoundResponse(id);
+
             var companyDto = _mapper.Map<CompanyOutputDto>(company);
-            return companyDto;
+
+            return new OkResponse<CompanyOutputDto>(companyDto);
         }
 
         public async Task<IEnumerable<CompanyOutputDto>> GetCompaniesByIdsAsync(IEnumerable<Guid> ids,

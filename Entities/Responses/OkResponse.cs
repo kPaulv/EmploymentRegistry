@@ -9,7 +9,7 @@ namespace Entities.Responses
 {
     public sealed class OkResponse<TResult> : BaseResponse
     {
-        TResult Result { get; set; }
+        public TResult Result { get; set; }
 
         public OkResponse(TResult result) : base(true)
         {
