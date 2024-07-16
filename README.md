@@ -34,4 +34,5 @@
 + SETUP CACHE SERVER FOR CACHE VALIDATION(Apache Traffic Server or Varnish or Squid or other)
 + Implement JWE
 + All OpenAPI Endpoints description for Swagger
++ Response API Flow for Employees
 
