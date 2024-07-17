@@ -4,6 +4,7 @@ using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
 using EmploymentRegistry.Utility;
 using FluentValidation;
+using MediatorService.Behaviours;
 using MediatR;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -97,6 +98,8 @@ builder.Services.AddJwtConfiguration(builder.Configuration);
 builder.Services.ConfigureSwagger();
 // Add MediatR (Mediator Service - API v2 BLL)
 builder.Services.AddMediatR(typeof(MediatorService.AssemblyReference).Assembly);
+// Add Behaviour for Fluent Validation (Mediator Service - API v2 BLL)
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 // Add Fluent Validation (Mediator Service - API v2 BLL)
 builder.Services.AddValidatorsFromAssembly(typeof(MediatorService.AssemblyReference).Assembly);
 
