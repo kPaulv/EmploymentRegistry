@@ -18,17 +18,26 @@ namespace Presentation.Controllers
         [HttpHead]
         public async Task<IActionResult> GetCompanies()
         {
-            var companies = 
-                await _sender.Send(new GetCompaniesQuery(trackChanges : false));
+            var companies =
+                await _sender.Send(new GetCompaniesQuery(trackChanges: false));
 
-            var companies_v2 = companies.Select(comp => 
-                new CompanyOutputDto() { 
-                    Id = comp.Id, 
-                    Name = comp.Name + " sold.", 
+            var companies_v2 = companies.Select(comp =>
+                new CompanyOutputDto() {
+                    Id = comp.Id,
+                    Name = comp.Name + " sold.",
                     FullAddress = comp.FullAddress
                 });
 
             return Ok(companies_v2);
+        }
+
+        [HttpGet("{id:guid}", Name = "GetCompanyById")]
+        public async Task<IActionResult> GetCompanyById(Guid id)
+        {
+            var company =
+                await _sender.Send(new GetCompanyQuery(id, trackChanges: false));
+
+            return Ok(company);
         }
     }
 }
