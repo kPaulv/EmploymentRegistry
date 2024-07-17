@@ -1,4 +1,5 @@
-﻿using MediatorService.Queries;
+﻿using MediatorService.Commands;
+using MediatorService.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DataTransferObjects;
@@ -38,6 +39,38 @@ namespace Presentation.Controllers
                 await _sender.Send(new GetCompanyQuery(id, trackChanges: false));
 
             return Ok(company);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCompany([FromBody]CompanyCreateDto 
+            companyCreateDto)
+        {
+            if (companyCreateDto is null)
+                return BadRequest("Error! Passed object is empty.");
+
+            var company =
+                await _sender.Send(new CreateCompanyCommand(companyCreateDto));
+
+            return CreatedAtRoute("GetCompanyById", new { Id = company.Id }, company );
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateCompany(Guid id, [FromBody]CompanyUpdateDto companyUpdateDto)
+        {
+            if (companyUpdateDto is null)
+                return BadRequest("Error! Passed update data is empty.");
+
+            await _sender.Send(new UpdateCompanyCommand(id, companyUpdateDto, TrackChanges: true));
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteCompany(Guid id)
+        {
+            await _sender.Send(new DeleteCompanyCommand(id, TrackChanges: true));
+
+            return NoContent();
         }
     }
 }
