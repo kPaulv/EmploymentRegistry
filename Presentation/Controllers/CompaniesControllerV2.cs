@@ -1,4 +1,5 @@
 ﻿using MediatorService.Commands;
+using MediatorService.Notifications;
 using MediatorService.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,13 @@ namespace Presentation.Controllers
     public class CompaniesControllerV2 : ControllerBase
     {
         private readonly ISender _sender;
+        private readonly IPublisher _publisher;
 
-        public CompaniesControllerV2(ISender sender) => _sender = sender;
+        public CompaniesControllerV2(ISender sender, IPublisher publisher)
+        {
+            _sender = sender;
+            _publisher = publisher;
+        }
 
         [HttpGet]
         [HttpHead]
@@ -23,7 +29,8 @@ namespace Presentation.Controllers
                 await _sender.Send(new GetCompaniesQuery(trackChanges: false));
 
             var companies_v2 = companies.Select(comp =>
-                new CompanyOutputDto() {
+                new CompanyOutputDto()
+                {
                     Id = comp.Id,
                     Name = comp.Name + " sold.",
                     FullAddress = comp.FullAddress
@@ -42,7 +49,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody]CompanyCreateDto 
+        public async Task<IActionResult> CreateCompany([FromBody]CompanyCreateDto
             companyCreateDto)
         {
             if (companyCreateDto is null)
@@ -51,11 +58,11 @@ namespace Presentation.Controllers
             var company =
                 await _sender.Send(new CreateCompanyCommand(companyCreateDto));
 
-            return CreatedAtRoute("GetCompanyById", new { Id = company.Id }, company );
+            return CreatedAtRoute("GetCompanyById", new { Id = company.Id }, company);
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCompany(Guid id, [FromBody]CompanyUpdateDto companyUpdateDto)
+        public async Task<IActionResult> UpdateCompany(Guid id, [FromBody] CompanyUpdateDto companyUpdateDto)
         {
             if (companyUpdateDto is null)
                 return BadRequest("Error! Passed update data is empty.");
@@ -68,7 +75,8 @@ namespace Presentation.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteCompany(Guid id)
         {
-            await _sender.Send(new DeleteCompanyCommand(id, TrackChanges: true));
+            //await _sender.Send(new DeleteCompanyCommand(id, TrackChanges: true));
+            await _publisher.Publish(new CompanyDeletedNotification(id, TrackChanges: true));
 
             return NoContent();
         }

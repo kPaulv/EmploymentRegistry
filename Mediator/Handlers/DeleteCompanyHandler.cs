@@ -3,6 +3,7 @@ using Contracts.Interfaces;
 using Entities.Entities;
 using Entities.Exceptions.NotFound;
 using MediatorService.Commands;
+using MediatorService.Notifications;
 using MediatorService.Queries;
 using MediatR;
 using Shared.DataTransferObjects;
@@ -10,7 +11,7 @@ using Shared.DataTransferObjects;
 namespace MediatorService.Handlers
 {
     internal sealed class DeleteCompanyHandler :
-        IRequestHandler<DeleteCompanyCommand, Unit>
+        INotificationHandler<CompanyDeletedNotification>
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
@@ -21,20 +22,19 @@ namespace MediatorService.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(DeleteCompanyCommand command,
+        public async Task Handle(CompanyDeletedNotification notification,
             CancellationToken cancellationToken)
         {
             var company =
-                await _repository.CompanyStorage.GetCompanyAsync(command.Id, command.TrackChanges);
+                await _repository.CompanyStorage.GetCompanyAsync(notification.Id, 
+                                                                    notification.TrackChanges);
 
             if (company is null)
-                throw new CompanyNotFoundException(command.Id);
+                throw new CompanyNotFoundException(notification.Id);
 
             _repository.CompanyStorage.DeleteCompany(company);
 
             await _repository.SaveAsync();
-
-            return Unit.Value;
         }
     }
 }
