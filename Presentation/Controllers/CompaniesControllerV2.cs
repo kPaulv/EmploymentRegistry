@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Presentation.ActionFilters;
-using Presentation.Controllers.Base;
-using Presentation.Extensions;
-using Presentation.ModelBinders;
-using Service.Contracts;
+﻿using MediatorService.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Shared.DataTransferObjects;
 
 namespace Presentation.Controllers
@@ -13,18 +10,16 @@ namespace Presentation.Controllers
     [ApiExplorerSettings(GroupName = "v2")]
     public class CompaniesControllerV2 : ControllerBase
     {
-        private readonly IServiceManager _serviceManager;
+        private readonly ISender _sender;
 
-        public CompaniesControllerV2(IServiceManager serviceManager) => _serviceManager = serviceManager;
+        public CompaniesControllerV2(ISender sender) => _sender = sender;
 
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetCompanies()
         {
-            var companiesResponse = await
-                _serviceManager.CompanyService.GetAllCompaniesAsync(trackChanges: false);
-
-            var companies = companiesResponse.GetResult<IEnumerable<CompanyOutputDto>>();
+            var companies = 
+                await _sender.Send(new GetCompaniesQuery(trackChanges : false));
 
             var companies_v2 = companies.Select(comp => 
                 new CompanyOutputDto() { 
