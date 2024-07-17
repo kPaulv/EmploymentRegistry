@@ -3,10 +3,9 @@ using Contracts.Interfaces;
 using EmploymentRegistry.Extensions;
 using EmploymentRegistry.Formatter;
 using EmploymentRegistry.Utility;
+using MediatR;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Options;
 using NLog;
 using Presentation.ActionFilters;
 using Service;
@@ -95,6 +94,8 @@ builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddJwtConfiguration(builder.Configuration);
 // Add Swagger generator for OpenAPI
 builder.Services.ConfigureSwagger();
+// Add MediatR
+builder.Services.AddMediatR(typeof(MediatorService.AssemblyReference).Assembly);
 
 var app = builder.Build();
 

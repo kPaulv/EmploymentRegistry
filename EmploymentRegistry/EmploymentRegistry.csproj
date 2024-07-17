@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.29">
       <PrivateAssets>all</PrivateAssets>
@@ -24,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
+    <ProjectReference Include="..\Mediator\MediatorService.csproj" />
     <ProjectReference Include="..\Presentation\Presentation.csproj" />
     <ProjectReference Include="..\Repository\Repository.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
